@@ -1,0 +1,163 @@
+<kpp-digit> = [0-9]
+
+<kpp-alpha-digit> = [0-9a-bA-B]
+
+<kpp-i8>  = <kpp-digit> # max: 8 bits
+<kpp-i16> = <kpp-digit> # max: 16 bits
+<kpp-i32> = <kpp-digit> # max: 32 bits
+<kpp-i64> = <kpp-digit> # max: 64 bits
+
+<kpp-f32> = <kpp-digit> + '.' + <kpp-digit> #Max: 4 digits mantissa 
+<kpp-f64> = <kpp-digit> + '.' + <kpp-digit> #Max: 8 digits mantissa 
+
+<kpp-bool> = true | false
+
+<kpp-char> = ''' + <kpp-alpha-digit> + ''' # max: one character
+
+<kpp-string> = <kpp-array-char>
+
+<kpp-void> = '0'
+
+<kpp-array-i8>  = '[' + [<kpp-i8>] + ']' 
+<kpp-array-i16> = '[' + [<kpp-i16>] + ']' 
+<kpp-array-i32> = '[' + [<kpp-i32>] + ']' 
+<kpp-array-i64> = '[' + [<kpp-i64>] + ']' 
+
+<kpp-array-f32> = '[' + [<kpp-f32>] + ']'
+<kpp-array-f64> = '[' + [<kpp-f64>] + ']'
+
+<kpp-array-char> = '[' + [<kpp-char>] + ']'
+<kpp-array-string> = '[' + [<kpp-string>] + ']'
+
+<kpp-array-bool> = '[' + [<kpp-bool>] + ']'
+
+<kpp-data-type> = <kpp-i8>
+    | <kpp-i16>
+    | <kpp-i32>
+    | <kpp-i64>
+    | <kpp-f32>
+    | <kpp-f64>
+    | <kpp-bool>
+    | <kpp-char>
+    | <kpp-string>
+    | <kpp-array-i8>
+    | <kpp-array-i16>
+    | <kpp-array-i32>
+    | <kpp-array-i64>
+    | <kpp-array-f32>
+    | <kpp-array-i64>
+    | <kpp-array-char>
+    | <kpp-array-string>
+    | <kpp-array-bool>
+
+<identifier> = [a-zA-Z_][a-zA-Z0-9_]
+
+<call-function> = <identifier> + '(' <argument-list> ')' | <identifier> + '(' + ')'
+
+<aritmetic-operator> = '+' | '-' | '*' | '/'
+
+<logical-operator> = '||' 
+    | '&&' 
+    | '!' 
+    | '^' 
+    | '|' 
+    | '&' 
+    | '==' 
+    | '!='
+    | '>'
+    | '<'
+    | '>='
+    | '<='
+
+<operator> = <aritmetic-operator> | <logical-operator>
+
+<argument> = [ <kpp-data-type> ]
+    | [ <call-function> ]
+    | [ <anonimous-function> ]
+    | [ <expression> ]
+    | [ <boolean-expression> ]
+
+<argument-list> = [ <argument> ]
+
+<condition-declaration> = 'if' + '(' <boolean-expression> ')' + <block-scope> 'end'
+    | 'if' + '(' <boolean-expression> ')' + <block-scope> + 'elif' + <boolean-expression> 'end'
+    | 'if' + '(' <boolean-expression> ')' + <block-scope> + 'elif' + <boolean-expression> + 'else' + <block> +'end'
+
+<interator> = 'in' # at list size - 1
+    | 'of' # at list size 
+
+<for-statement> = 'for' + '(' <constant-declaration> + <interator> + <kpp-array-i8> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-i16> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-i32> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-i64> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-f32> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-f64> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-char> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-string> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <kpp-array-bool> + ')' + <block-scope> 
+
+<while-statement> = 'while' + '(' + <boolean-expression> + ')' + <block-scope>
+
+<loop-declaration> = <for-statement> | <while-statement>
+
+<block-scope> = ':' + <data-declaration> + 'end'
+    | ':' + <call-function> + ';' + 'end'
+    | ':' + <condition-declaration> + 'end'
+    | ':' + <loop-declaration> + 'end'
+    | ':' + <return-statement> + 'end'
+
+<boolean-expression> = # TO DO
+
+<expression> = <kpp-data-type> 
+    | <call-function>
+    | <expression>
+    | <anonimous-function>
+    | <kpp-data-type> + <operator> + <expression>
+    | <expression> + <operator> + <expression>
+    | <call-function> + <operator> + <expression>
+    | <kpp-data-type> + <operator> + <call-function>
+    | <expression> + <operator> + <call-function>
+    | <call-function> + <operator> + <call-function>
+    | <call-function> + <operator> + <kpp-data-type>
+    | <kpp-data-type> + <operator> + <kpp-data-type>
+    | <kpp-data-type> + <operator> + <anonimous-function>
+    | <anonimous-function> + <operator> + <kpp-data-type>
+    | <expression> + <operator> + <anonimous-function>
+    | <anonimous-function> + <operator> + <expression>
+    | <call-function> + <operator> + <anonimous-function>
+    | <anonimous-function> + <operator> + <call-function>
+
+<variable-declaration> = 'var' + <identifier> + ':' + <kpp-data-type>
+<constant-declaration> = 'const' + <identifier> + ':' + <kpp-data-type>
+
+<data-declaration> = <variable-declaration> + ';'
+    | <constant-declaration> + ';'
+    | <variable-declaration> + = + <expression> + ';'
+    | <variable-declaration> + = + <call-function> + ';'
+    | <variable-declaration> + = + <anonimous-function> + ';'
+    | <variable-declaration> + = + <kpp-data-type> + ';'
+    | <constant-declaration> + = + <expression> + ';'
+    | <constant-declaration> + = + <call-function> + ';'
+    | <constant-declaration> + = + <anonimous-function> + ';'
+    | <constant-declaration> + = + <kpp-data-type> + ';'
+
+<struct-block-scope> = ':' <data-declaration> + 'end' 
+    | ':' [ <data-declaration> ] + 'end'
+
+<struct-declaration> = 'struct' + <identifier> + <struct-block-scope>
+
+<parameter> = <variable-declaration> 
+    | <const-declaration>
+    | <variable-declaration> + = + <expression>
+    | <variable-declaration> + = + <call-function>
+    | <variable-declaration> + = + <anonimous-function>
+    | <variable-declaration> + = + <kpp-data-type>
+    | <constant-declaration> + = + <expression>
+    | <constant-declaration> + = + <call-function>
+    | <constant-declaration> + = + <anonimous-function>
+    | <constant-declaration> + = + <kpp-data-type>
+
+<parameter-list> = [ <parameter> ]
+    | [ <parameter> + ',' + <parameter> ',' ... ]
+
+<function-declaration> = 'fun' + <identifier> '(' + <parameter-list> + ')' + '->' + <kpp-data-type> + <block-scope>
