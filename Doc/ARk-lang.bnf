@@ -1,0 +1,119 @@
+<lietarl-int>    = [0-9]+
+<lietarl-float>  = [0-9]+ "." [0-9]+
+<literal-bool>   = "true" | "false"
+<literal-char>   = "'" . "'" 
+<literal-string> = '"' .* '"'
+
+<type-native>    = "i8" | "i16" | "i32" | "i64" | "f32" | "f64" | "bool" | "string" | "void"
+
+<identifier>     = [a-zA-Z_] [a-zA-Z0-9_]*
+
+<call-function>  = <identifier> + '(' <argument-list> ')' | <identifier> + '(' + ')'
+
+<aritmetic-operator> = '+' | '-' | '*' | '/'
+
+<logical-operator> = '||' 
+    | '&&' 
+    | '!' 
+    | '^' 
+    | '|' 
+    | '&' 
+    | '==' 
+    | '!='
+    | '>'
+    | '<'
+    | '>='
+    | '<='
+
+<operator> = <aritmetic-operator> | <logical-operator>
+
+<argument> = [ <data-type> ]
+    | [ <call-function> ]
+    | [ <anonimous-function> ]
+    | [ <expression> ]
+    | [ <boolean-expression> ]
+
+<argument-list> = [ <argument> ]
+
+<condition-declaration> = 'if' + '(' <boolean-expression> ')' + <block-scope> 'end'
+    | 'if' + '(' <boolean-expression> ')' + <block-scope> + 'elif' + <boolean-expression> 'end'
+    | 'if' + '(' <boolean-expression> ')' + <block-scope> + 'elif' + <boolean-expression> + 'else' + <block> +'end'
+
+<interator> = 'in' # at list size - 1
+    | 'of' # at list size 
+
+<for-statement> = 'for' + '(' <constant-declaration> + <interator> + <array-i8> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-i16> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-i32> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-i64> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-f32> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-f64> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-char> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-string> + ')' + <block-scope> 
+    | 'for' + '(' <constant-declaration> + <interator> + <array-bool> + ')' + <block-scope> 
+
+<while-statement> = 'while' + '(' + <boolean-expression> + ')' + <block-scope>
+
+<loop-declaration> = <for-statement> | <while-statement>
+
+<block-scope> = ':' + <data-declaration> + 'end'
+    | ':' + <call-function> + ';' + 'end'
+    | ':' + <condition-declaration> + 'end'
+    | ':' + <loop-declaration> + 'end'
+    | ':' + <return-statement> + 'end'
+
+<boolean-expression> = # TO DO
+
+<expression> = <data-type> 
+    | <call-function>
+    | <expression>
+    | <anonimous-function>
+    | <data-type> + <operator> + <expression>
+    | <expression> + <operator> + <expression>
+    | <call-function> + <operator> + <expression>
+    | <data-type> + <operator> + <call-function>
+    | <expression> + <operator> + <call-function>
+    | <call-function> + <operator> + <call-function>
+    | <call-function> + <operator> + <data-type>
+    | <data-type> + <operator> + <data-type>
+    | <data-type> + <operator> + <anonimous-function>
+    | <anonimous-function> + <operator> + <data-type>
+    | <expression> + <operator> + <anonimous-function>
+    | <anonimous-function> + <operator> + <expression>
+    | <call-function> + <operator> + <anonimous-function>
+    | <anonimous-function> + <operator> + <call-function>
+
+<variable-declaration> = 'var' + <identifier> + ':' + <data-type>
+<constant-declaration> = 'const' + <identifier> + ':' + <data-type>
+
+<data-declaration> = <variable-declaration> + ';'
+    | <constant-declaration> + ';'
+    | <variable-declaration> + = + <expression> + ';'
+    | <variable-declaration> + = + <call-function> + ';'
+    | <variable-declaration> + = + <anonimous-function> + ';'
+    | <variable-declaration> + = + <data-type> + ';'
+    | <constant-declaration> + = + <expression> + ';'
+    | <constant-declaration> + = + <call-function> + ';'
+    | <constant-declaration> + = + <anonimous-function> + ';'
+    | <constant-declaration> + = + <data-type> + ';'
+
+<struct-block-scope> = ':' <data-declaration> + 'end' 
+    | ':' [ <data-declaration> ] + 'end'
+
+<struct-declaration> = 'struct' + <identifier> + <struct-block-scope>
+
+<parameter> = <variable-declaration> 
+    | <const-declaration>
+    | <variable-declaration> + = + <expression>
+    | <variable-declaration> + = + <call-function>
+    | <variable-declaration> + = + <anonimous-function>
+    | <variable-declaration> + = + <data-type>
+    | <constant-declaration> + = + <expression>
+    | <constant-declaration> + = + <call-function>
+    | <constant-declaration> + = + <anonimous-function>
+    | <constant-declaration> + = + <data-type>
+
+<parameter-list> = [ <parameter> ]
+    | [ <parameter> + ',' + <parameter> ',' ... ]
+
+<function-declaration> = 'fun' + <identifier> '(' + <parameter-list> + ')' + '->' + <data-type> + <block-scope>
