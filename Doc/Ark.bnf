@@ -1,0 +1,65 @@
+<literal-int>    = [0-9]+
+<literal-float>  = [0-9]+ "." [0-9]+
+<literal-bool>   = "true" | "false"
+<literal-char>   = "'" . "'" 
+<literal-string> = '"' .* '"'
+
+<literal-value> = <literal-int>
+    | <literal-float>
+    | <literal-bool>
+    | <literal-char>
+    | <literal-string>
+    | <struct-instance>
+
+<type-native> = "i8" | "i16" | "i32" | "i64" | "f32" | "f64" | "bool" | "string" | "void"
+
+<identifier>  = [a-zA-Z_][a-zA-Z0-9_]*
+
+<call-function> = <identifier> "(" [ <argument-list> ] ")"
+
+<op-arithmetic> = "+" | "-" | "*" | "/" | "^"
+<op-logical>    = "||" | "&&" | "!"
+<op-comparison> = "==" | "!=" | ">" | "<" | ">=" | "<="
+<op-bitwise>    = "|" | "&"
+
+<argument-list> = <expression> ("," <expression>)*
+
+<condition-stmt> = 'if' '(' <expression> ')' <block> 
+                    ( 'elif' '(' <expression> ')' <block> )* [ 'else' <block> ] 
+                    'end'
+
+<interator> = 'in' | 'of'
+
+<for-stmt> = 'for' '(' <constant-declaration> <interator> <type-native>* ')' <block-scope> 
+
+<while-stmt> = 'while' '(' <expression> ')' <block-scope>
+
+<loop-declaration> = <for-stmt> | <while-stmt>
+
+<return-stmt> = 'return' ( <expression> ) ';'
+
+<statement> = <data-declaration> | <call-function> ";" | <condition-stmt> | <loop-declaration> | <return-stmt>
+
+<block-scope> = ':' <statement>* 'end'
+
+<expression> = <literal-value> | <call-function> | <identifier> | <anonimous-function> [ <expression> ]*
+
+<variable-declaration> = 'var' <identifier> ':' <type-native>
+<constant-declaration> = 'const' <identifier> ':' <type-native>
+
+<data-declaration> = (<variable-declaration> | <constant-declaration>) [ '=' <expression> ] ';'
+
+<struct-value-assignment> = <identifier> ':' <literal-value>
+
+<struct-value-assign-list> = <struct-value-assignment> [',' <struct-value-assignment>]*
+
+<struct-instance> = <identifier> '{' <struct-value-assign-list> '}'
+
+<struct-block-scope> = ':' <data-declaration> 'end'
+
+<struct-declaration> = 'struct' <identifier> <struct-block-scope>
+
+<parameter>      = (<constant-declaration> | <variable-declaration>) [ "=" <literal-value> ]
+<parameter-list> = <parameter> ( "," <parameter> )*
+
+<function-declaration> = 'fun' <identifier> '(' <parameter-list> ')' '->' <type-native> <block-scope>
