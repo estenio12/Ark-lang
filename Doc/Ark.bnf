@@ -15,6 +15,8 @@
 
 <identifier>  = [a-zA-Z_][a-zA-Z0-9_]*
 
+<type-list>   = <type-identifier> ( "," <type-identifier> )*
+
 <call-function> = <identifier> "(" [ <argument-list> ] ")"
 
 <op-arithmetic> = "+" | "-" | "*" | "/" | "^"
@@ -30,7 +32,7 @@
 
 <interator> = 'in' | 'of'
 
-<for-stmt> = 'for' '(' <constant-declaration> <interator> <type-native>* ')' <block-scope> 
+<for-stmt> = 'for' '(' <constant-declaration> <interator> <type-identifier>* ')' <block-scope> 
 
 <while-stmt> = 'while' '(' <expression> ')' <block-scope>
 
@@ -42,10 +44,10 @@
 
 <block-scope> = ':' <statement>* 'end'
 
-<expression> = <literal-value> | <call-function> | <identifier> | <anonimous-function> [ <expression> ]*
+<expression> = <literal-value> | <call-function> | <identifier> | <anonimous-function> | '(' <expression> ')'
 
-<variable-declaration> = 'var' <identifier> ':' <type-native>
-<constant-declaration> = 'const' <identifier> ':' <type-native>
+<variable-declaration> = 'var' <identifier> ':' <type-identifier>
+<constant-declaration> = 'const' <identifier> ':' <type-identifier>
 
 <data-declaration> = (<variable-declaration> | <constant-declaration>) [ '=' <expression> ] ';'
 
@@ -57,9 +59,25 @@
 
 <struct-block-scope> = ':' <data-declaration> 'end'
 
-<struct-declaration> = 'struct' <identifier> <struct-block-scope>
+<struct-inherit> = ['!'] <identifier>
+
+<struct-declaration> = 'struct' <identifier> [ 'extends' <struct-inherit> (',' <struct-inherit>)* ] <struct-block-scope>
 
 <parameter>      = (<constant-declaration> | <variable-declaration>) [ "=" <literal-value> ]
 <parameter-list> = <parameter> ( "," <parameter> )*
 
-<function-declaration> = 'fun' <identifier> '(' <parameter-list> ')' '->' <type-native> <block-scope>
+<type-identifier> = <type-native> | <identifier> | <type-function>
+
+<type-function> = 'fun' '(' [ <type-list> ] ')' '->' <type-identifier>
+
+<function-declaration> = 'fun' [ <identifier> '::' ] <identifier> '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
+
+<anonimous-function> = '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
+
+<extern-declaration> = 'extern' 'fun' <identifier> '(' [ <type-list> ] ')' '->' <type-identifier> ';'
+
+<module-declaration> = 'module' <identifier> ( '::' <identifier> )* ';'
+
+<import-declaration> = 'import' <identifier> ( '::' <identifier> )* ';'
+
+
