@@ -15,9 +15,11 @@
 
 <identifier>  = [a-zA-Z_][a-zA-Z0-9_]*
 
+<type-array> = <type-identifier> "[" <literal-int> "]"
+
 <type-list>   = <type-identifier> ( "," <type-identifier> )*
 
-<call-function> = <identifier> "(" [ <argument-list> ] ")"
+<call-function> = <identifier> [ <generic-args> ] "(" [ <argument-list> ] ")"
 
 <op-arithmetic> = "+" | "-" | "*" | "/" | "^"
 <op-logical>    = "||" | "&&" | "!"
@@ -49,9 +51,15 @@
 <variable-declaration> = 'var' <identifier> ':' <type-identifier>
 <constant-declaration> = 'const' <identifier> ':' <type-identifier>
 
-<data-declaration> = (<variable-declaration> | <constant-declaration>) [ '=' <expression> ] ';'
+<access-modifier> = 'internal'
 
-<struct-value-assignment> = <identifier> ':' <literal-value>
+<data-declaration> = [ <access-modifier> ] (<variable-declaration> | <constant-declaration>) [ '=' <expression> ] ';'
+
+<generic-params> = "<" <identifier> ( "," <identifier> )* ">"
+
+<generic-args>   = "<" <type-identifier> ( "," <type-identifier> )* ">"
+
+<struct-value-assignment> = [ <access-modifier> ] <identifier> ':' <literal-value>
 
 <struct-value-assign-list> = <struct-value-assignment> [',' <struct-value-assignment>]*
 
@@ -61,16 +69,16 @@
 
 <struct-inherit> = ['!'] <identifier>
 
-<struct-declaration> = 'struct' <identifier> [ 'extends' <struct-inherit> (',' <struct-inherit>)* ] <struct-block-scope>
+<struct-declaration> = [ <access-modifier> ] 'struct' <identifier> [ <generic-params> ] [ 'extends' <struct-inherit> (',' <struct-inherit>)* ] <struct-block-scope>
 
 <parameter>      = (<constant-declaration> | <variable-declaration>) [ "=" <literal-value> ]
 <parameter-list> = <parameter> ( "," <parameter> )*
 
-<type-identifier> = <type-native> | <identifier> | <type-function>
+<type-identifier> = ( <type-native> | <identifier> ) [ <generic-args> ] | <type-function> | <type-array>
 
 <type-function> = 'fun' '(' [ <type-list> ] ')' '->' <type-identifier>
 
-<function-declaration> = 'fun' [ <identifier> '::' ] <identifier> '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
+<function-declaration> = [ <access-modifier> ] 'fun' [ <identifier> '::' ] <identifier> [ <generic-params> ] '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
 
 <anonimous-function> = '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
 
