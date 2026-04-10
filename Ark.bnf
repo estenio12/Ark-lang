@@ -21,10 +21,10 @@
 
 <call-function> = <identifier> [ <generic-args> ] "(" [ <argument-list> ] ")"
 
-<op-arithmetic> = "+" | "-" | "*" | "/"
-<op-logical>    = "||" | "&&" | "!"
+<op-arithmetic> = "+" | "-" | "*" | "/" | "+=" | "-=" | "*=" | "/="
+<op-logical>    = "||" | "&&"
 <op-comparison> = "==" | "!=" | ">" | "<" | ">=" | "<="
-<op-bitwise>    = "|" | "&" | "^" | "<<" | ">>"
+<op-bitwise>    = "|" | "&" | "^" | "<<" | ">>" | "!"
 
 <argument-list> = <expression> ("," <expression>)*
 
@@ -62,7 +62,7 @@
 
 <data-declaration> = [ <access-modifier> ] (<variable-declaration> | <constant-declaration>) [ '=' <expression> ] ';'
 
-<generic-params> = "<" <identifier> ( "," <identifier> )* ">"
+<generic-param> = "<" <identifier> ( "," <identifier> )* ">"
 
 <generic-args>   = "<" <type-identifier> ( "," <type-identifier> )* ">"
 
@@ -76,7 +76,7 @@
 
 <struct-inherit> = ['!'] <identifier>
 
-<struct-declaration> = [ <access-modifier> ] 'struct' <identifier> [ <generic-params> ] [ 'extends' <struct-inherit> (',' <struct-inherit>)* ] <struct-block-scope>
+<struct-declaration> = [ <access-modifier> ] 'struct' <identifier> [ <generic-param> ] [ 'extends' <struct-inherit> (',' <struct-inherit>)* ] <struct-block-scope>
 
 <parameter>      = (<constant-declaration> | <variable-declaration>) [ "=" <literal-value> ]
 <parameter-list> = <parameter> ( "," <parameter> )*
@@ -85,7 +85,7 @@
 
 <type-function> = 'fun' '(' [ <type-list> ] ')' '->' <type-identifier>
 
-<function-declaration> = [ <access-modifier> ] 'fun' [ <identifier> '::' ] <identifier> [ <generic-params> ] '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
+<function-declaration> = [ <access-modifier> ] 'fun' [ <identifier> '::' ] <identifier> [ <generic-param> ] '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
 
 <anonimous-function> = '(' <parameter-list> ')' '->' <type-identifier> <block-scope>
 
