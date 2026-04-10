@@ -13,4 +13,4 @@ clean:
 	rm -f $(TARGET)
 
 run-test: all
-	$(TARGET) abc123
+	$(TARGET) test.ark
