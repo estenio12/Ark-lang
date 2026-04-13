@@ -4,10 +4,7 @@
 #include <string>
 
 #ifdef _WIN32
-    #include <windows.h>
-    #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
-        #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
-    #endif
+#include <windows.h>
 #endif
 
 
@@ -24,36 +21,43 @@ namespace Output
     {
         #ifdef _WIN32
             HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-            if (hOut == INVALID_HANDLE_VALUE) return;
             DWORD dwMode = 0;
-            if (GetConsoleMode(hOut, &dwMode)) {
-                SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-            }
+            GetConsoleMode(hOut, &dwMode);
+            SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+            SetConsoleOutputCP(CP_UTF8);
+            SetConsoleCP(CP_UTF8);
         #endif
     }
 
-    inline void print(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void Print(std::string_view message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << message << RESET << (break_line ? "\n" : "");
     }
     
-    inline void printError(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintError(std::string_view message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << RED << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void printSuccess(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintSuccess(std::string_view message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << GREEN << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void printWarn(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintWarn(std::string_view message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << YELLOW << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void printInfo(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintInfo(std::string_view message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << BLUE << message << RESET << (break_line ? "\n" : "");
+    }
+
+    inline void ThrowFatalError(std::string_view message)
+    {
+        Output::PrintError(message, true, true);
+        exit(1);
     }
 };
