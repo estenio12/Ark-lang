@@ -3,13 +3,24 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <functional>
 #include "AST.hpp"
 #include "SymbolTable.hpp"
 
 namespace ModuleManager
 {
-    class ModuleResolutionState;
     enum class EModuleState { WAITING, PROCESSING, READY, ERROR };
+    
+    class ModuleResolutionState
+    {
+        public:
+            EModuleState state= EModuleState::WAITING;
+            std::shared_ptr<SymbolTable> symbol_table;
+            std::vector<std::function<void>> listeners;
+
+        public:
+            void UpdateState(EModuleState pstate);
+    };
 
     class ModuleManager
     {
@@ -24,12 +35,5 @@ namespace ModuleManager
 
         public:
             void ImportResolution(std::string impot_path);
-    };
-
-    class ModuleResolutionState
-    {
-        public:
-            std::shared_ptr<SymbolTable> symbol_table;
-            EModuleState state= EModuleState::WAITING;
     };
 }
