@@ -55,7 +55,7 @@ namespace Output
         std::cout << (use_bold ? BOLD : "") << BLUE << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void ThrowFatalError(std::string_view message)
+    [[noreturn]] inline void ThrowFatalError(std::string_view message)
     {
         Output::PrintError(message, true, true);
         exit(1);
