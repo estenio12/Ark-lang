@@ -33,3 +33,15 @@ std::string_view FileHandler::GetContent() const
     return this->file_content;
 }
 
+std::string FileHandler::PathResolver(const std::string& path)
+{
+    try 
+    {
+        return std::filesystem::canonical(path).string();
+    } 
+    catch (const std::filesystem::filesystem_error& e) 
+    {
+        Output::ThrowFatalError("Could not resolve module path: " + path);
+    }
+}
+

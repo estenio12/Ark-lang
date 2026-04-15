@@ -10,12 +10,21 @@
 
 namespace ModuleManager
 {
-    enum class EModuleState { WAITING, PROCESSING, READY, ERROR };
+    enum class EModuleState { WAITING, PROCESSING, READY, FAIL };
     
+    class ModuleResolutionCaller
+    {
+        public:
+            std::function<void()> listener;
+            std::string owner_path;
+            std::string import_path;
+            std::vector<std::string> dependency_stack;
+    };
+
     class ModuleResolutionState
     {
         private:
-            std::mutex mtx_liteners;
+            mutable std::mutex mtx_liteners;
 
         private:
             std::vector<std::shared_ptr<ModuleResolutionCaller>> listeners;
@@ -24,6 +33,7 @@ namespace ModuleManager
             EModuleState state= EModuleState::WAITING;
             std::shared_ptr<SymbolTable> symbol_table;
             std::vector<std::string> messages;
+            std::string import_path;
 
         public:
             ModuleResolutionState() = default;
@@ -31,18 +41,14 @@ namespace ModuleManager
         public:
             void UpdateState(EModuleState pstate);
             void AssignListener(std::shared_ptr<ModuleResolutionCaller> caller);
-    };
-
-    class ModuleResolutionCaller
-    {
-        public:
-            std::function<void()> listener;
-            std::string owner_path;
-            std::string import_path;
+            bool IsReadyCalledTo(std::shared_ptr<ModuleResolutionCaller> caller) const;
     };
 
     class ModuleManager
     {
+        private:
+            std::mutex mtx_module_history;
+
         private:
             // # Path, resolution-state reference.
             std::map<std::string, std::shared_ptr<ModuleResolutionState>> module_history;
@@ -56,5 +62,8 @@ namespace ModuleManager
             void ImportResolution(std::shared_ptr<ModuleResolutionCaller> caller);
             std::shared_ptr<ModuleResolutionState> GetResolutionState(const std::string& path);
             AST* GetASTByPath(const std::string& path) const;
+
+        private:
+            std::string FormatStack(const std::vector<std::string>& stack);
     };
 }

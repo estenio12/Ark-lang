@@ -10,4 +10,5 @@ class FileHandler
     public:
         FileHandler(std::string_view path);
         std::string_view GetContent() const;
+        static std::string PathResolver(const std::string& path);
 };
