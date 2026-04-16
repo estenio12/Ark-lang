@@ -41,14 +41,14 @@ struct Token
 class TokenManager
 {
     private:
-        std::string_view source_path;
+        std::shared_ptr<FileDescriptor> file_descriptor;
         std::vector<Token> tokens;
         size_t cursor = 0;
 
     public:
-        TokenManager(std::string_view path, uint64_t file_size) : source_path(path) 
+        TokenManager(std::shared_ptr<FileDescriptor> file_descriptor) : file_descriptor(file_descriptor) 
         {
-            tokens.reserve(file_size / 5);
+            tokens.reserve(file_descriptor->file_size / 5);
         }
 
     public:
