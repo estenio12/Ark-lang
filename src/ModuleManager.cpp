@@ -5,7 +5,7 @@ namespace ModuleManager
 {
     #pragma region MODULE MANAGER
 
-    void ModuleManager::ImportResolution(std::shared_ptr<ModuleResolutionCaller> caller)
+    void Manager::ImportResolution(std::shared_ptr<ModuleResolutionCaller> caller)
     {
         {
             std::lock_guard<std::mutex> lock(this->mtx_module_history);
@@ -47,21 +47,21 @@ namespace ModuleManager
         }
     }
 
-    std::shared_ptr<ModuleResolutionState> ModuleManager::GetResolutionState(const std::string& path)
+    std::shared_ptr<ModuleResolutionState> Manager::GetResolutionState(const std::string& path)
     {
         auto it = this->module_history.find(path);
         if(it != this->module_history.end()) return it->second;
         Output::ThrowFatalError("Resolution state not found: " + path);
     }
 
-    AST* ModuleManager::GetASTByPath(const std::string& path) const
+    AST* Manager::GetASTByPath(const std::string& path) const
     {
         auto it = this->module_ast.find(path);
         if(it != this->module_ast.end()) return it->second.get();
         Output::ThrowFatalError("AST not found in Module-Manager: " + path);
     }
 
-    std::string ModuleManager::FormatStack(const std::vector<std::string>& stack)
+    std::string Manager::FormatStack(const std::vector<std::string>& stack)
     {
         std::string circular_history = "";
         for(int i = 0; i < stack.size(); i++) 

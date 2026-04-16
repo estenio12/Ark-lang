@@ -3,34 +3,34 @@
 #include "FileHandler.hpp"
 #include "Output.hpp"
 
-FileHandler::FileHandler(std::string_view file_path): file_path(file_path)
+std::shared_ptr<FileDescriptor> FileHandler::GetFileContent(const std::string& path)
 {
-    if(this->file_path.empty())
+    if(path.empty())
         Output::ThrowFatalError("Source code file path is required");
 
-    if(!std::filesystem::exists(std::filesystem::path(this->file_path)))
-        Output::ThrowFatalError("Source code cannot be founded: " + this->file_path);
-
-    std::ifstream in(this->file_path, std::ios::binary | std::ios::ate);
+    auto absolute_path = FileHandler::PathResolver(path);
     
+    std::ifstream in(absolute_path, std::ios::binary | std::ios::ate);
+
     if(!in.is_open())
-        Output::ThrowFatalError("File cannot be read: " + this->file_path);
+        Output::ThrowFatalError("File cannot be read: " + absolute_path);
 
     std::streamsize size = in.tellg();
-    if(size <= 0) return;
-    in.seekg(0, std::ios::beg);
-
-    this->file_content.resize(size);
-
-    if(!in.read(this->file_content.data(), size))
-        Output::ThrowFatalError("Error reading content from: " + this->file_path);
     
-    in.close();
-}
+    auto file_descriptor = std::make_shared<FileDescriptor>();
+    file_descriptor->absolute_path = absolute_path;
+    file_descriptor->file_size = static_cast<uint64_t>(size);
 
-std::string_view FileHandler::GetContent() const
-{
-    return this->file_content;
+    if(size > 0) 
+    {
+        in.seekg(0, std::ios::beg);
+        file_descriptor->source_code.resize(size);
+        if(!in.read(file_descriptor->source_code.data(), size))
+            Output::ThrowFatalError("Error reading content from: " + absolute_path);
+    }
+
+    in.close();
+    return file_descriptor; 
 }
 
 std::string FileHandler::PathResolver(const std::string& path)
@@ -41,7 +41,8 @@ std::string FileHandler::PathResolver(const std::string& path)
     } 
     catch (const std::filesystem::filesystem_error& e) 
     {
-        Output::ThrowFatalError("Could not resolve module path: " + path);
+        Output::ThrowFatalError("Could not resolve path: " + path);
     }
 }
+
 

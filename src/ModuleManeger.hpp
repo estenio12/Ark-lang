@@ -44,7 +44,7 @@ namespace ModuleManager
             bool IsReadyCalledTo(std::shared_ptr<ModuleResolutionCaller> caller) const;
     };
 
-    class ModuleManager
+    class Manager
     {
         private:
             std::mutex mtx_module_history;
@@ -56,7 +56,7 @@ namespace ModuleManager
             std::map<std::string, std::unique_ptr<AST>> module_ast;
 
         public:
-            ModuleManager() = default;
+            Manager() = default;
 
         public:
             void ImportResolution(std::shared_ptr<ModuleResolutionCaller> caller);
