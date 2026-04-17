@@ -88,8 +88,8 @@ namespace DELIMITER
     constexpr std::string_view RBRACE    = "}";
     constexpr std::string_view LBRACKET  = "[";
     constexpr std::string_view RBRACKET  = "]";
-    constexpr std::string_view ARROW     = "->";
     constexpr std::string_view SEMICOLON = ";";
+    constexpr std::string_view ARROW     = "->";
     constexpr std::string_view SCOPEACCESS = "::";
 }
 
