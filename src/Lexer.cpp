@@ -41,15 +41,17 @@ std::unique_ptr<TokenManager> Lexer::Tokenize()
             continue;
         }
 
-        auto delimiter = IsDelimitir(i);
+        auto delimiter = IsDelimiter(i);
         if(delimiter > 0)
         {
             // # Build token with first rect.
             this->BuildToken(start_rect, i, line, col);
 
-            // # Build token with delimiter found.
-            this->BuildToken(i, i + delimiter, line, col);
-            start_rect = ++i;
+            // # Build token with the delimiter founded.
+            auto start = i;
+            if(delimiter > 1) i += delimiter - 1;
+            this->BuildToken(start, i, line, col);
+            start_rect = i;
             continue;
         }
     }
@@ -57,7 +59,7 @@ std::unique_ptr<TokenManager> Lexer::Tokenize()
     return tokens;
 }
 
-uint8_t Lexer::IsDelimitir(int i)
+uint8_t Lexer::IsDelimiter(int i)
 {
     auto safe_range = (i + 1) < source.size();
     if(safe_range && source.substr(i, 2) == DELIMITER::ARROW) return 2;

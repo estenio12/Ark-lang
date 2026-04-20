@@ -29,7 +29,7 @@ class Lexer
         const char NEW_LINE = '\n';
 
     private:
-        uint8_t IsDelimitir(int start_pos);
+        uint8_t IsDelimiter(int start_pos);
 
     private:
         std::string_view GetLexeme(size_t start, size_t end);
