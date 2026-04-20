@@ -1,13 +1,14 @@
 #include "Lexer.hpp"
 #include "Definitions.hpp"
+#include "Output.hpp"
 
 std::unique_ptr<TokenManager> Lexer::Tokenize()
 {
     auto tokens = std::make_unique<TokenManager>(file_descriptor);
 
     int64_t line = 1;
-    int64_t col = -1;
-    uint16_t start_rect = 0, end_rect = 0;
+    int64_t col  = 0;
+    uint16_t start_rect = 0;
 
     char letter;
     size_t source_size = file_descriptor->source_code.size();
@@ -28,17 +29,32 @@ std::unique_ptr<TokenManager> Lexer::Tokenize()
         if(letter == COMMENTARY)
         {
             while (i < source_size && source[i] != NEW_LINE) { i++; }
-            i--;
+            start_rect = ++i;
+            continue;
+        }
+
+        if(letter == WHITESPACE)
+        {
+            this->BuildToken(start_rect, i, line, col);
+            Output::Print("Whiespace");
+            start_rect = i + 1;
             continue;
         }
 
         auto delimiter = IsDelimitir(i);
-        if(letter == WHITESPACE || delimiter > 0)
+        if(delimiter > 0)
         {
-            i += delimiter - 1;
-            end_rect = i;
+            // # Build token with first rect.
+            this->BuildToken(start_rect, i, line, col);
+
+            // # Build token with delimiter found.
+            this->BuildToken(i, i + delimiter, line, col);
+            start_rect = ++i;
+            continue;
         }
     }
+
+    return tokens;
 }
 
 uint8_t Lexer::IsDelimitir(int i)
@@ -59,11 +75,21 @@ uint8_t Lexer::IsDelimitir(int i)
     return 0;
 }
 
-
-void Lexer::BuildToken(uint16_t start_pos, uint16_t end_pos, int64_t line, int64_t col)
+void Lexer::BuildToken(uint16_t start_rect, uint16_t end_rect, int64_t line, int64_t col)
 {
-    
+    Token token;
+    token.col_start = start_rect;
+    token.col_end = end_rect;
+    token.line = line;
+    token.content = this->GetLexeme(start_rect, end_rect);
+
+    Output::Print("\n>>\n");
+    Output::Print(token.content);
+    Output::Print("\n>>\n");
 }
 
-
+std::string_view Lexer::GetLexeme(size_t start, size_t end)
+{
+    return this->source.substr(start, end - start);
+}
 

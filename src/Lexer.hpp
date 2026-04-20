@@ -32,6 +32,7 @@ class Lexer
         uint8_t IsDelimitir(int start_pos);
 
     private:
+        std::string_view GetLexeme(size_t start, size_t end);
         void BuildToken(uint16_t start_pos, uint16_t end_pos, int64_t line, int64_t col);
 };
 

@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     auto timer_end = std::chrono::high_resolution_clock::now();
     auto elipsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(timer_end - timer_start);
 
-    Output::Print("Compilation completed in: " + std::to_string(elipsed_time.count()) + "ms");
+    Output::Print("\nCompilation completed in: " + std::to_string(elipsed_time.count()) + "ms");
 
     return EXIT_SUCCESS;
 }
