@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/esteniopc/Apps/Ark-lang/build",
+  "command": "/usr/bin/c++  -I/home/esteniopc/Apps/Ark-lang/src -g -std=c++23 -Wall -Wextra -O3 -o CMakeFiles/arkc.dir/src/CoreCompile.cpp.o -c /home/esteniopc/Apps/Ark-lang/src/CoreCompile.cpp",
+  "file": "/home/esteniopc/Apps/Ark-lang/src/CoreCompile.cpp",
+  "output": "CMakeFiles/arkc.dir/src/CoreCompile.cpp.o"
+},
+{
+  "directory": "/home/esteniopc/Apps/Ark-lang/build",
+  "command": "/usr/bin/c++  -I/home/esteniopc/Apps/Ark-lang/src -g -std=c++23 -Wall -Wextra -O3 -o CMakeFiles/arkc.dir/src/FileHandler.cpp.o -c /home/esteniopc/Apps/Ark-lang/src/FileHandler.cpp",
+  "file": "/home/esteniopc/Apps/Ark-lang/src/FileHandler.cpp",
+  "output": "CMakeFiles/arkc.dir/src/FileHandler.cpp.o"
+},
+{
+  "directory": "/home/esteniopc/Apps/Ark-lang/build",
+  "command": "/usr/bin/c++  -I/home/esteniopc/Apps/Ark-lang/src -g -std=c++23 -Wall -Wextra -O3 -o CMakeFiles/arkc.dir/src/Lexer.cpp.o -c /home/esteniopc/Apps/Ark-lang/src/Lexer.cpp",
+  "file": "/home/esteniopc/Apps/Ark-lang/src/Lexer.cpp",
+  "output": "CMakeFiles/arkc.dir/src/Lexer.cpp.o"
+},
+{
+  "directory": "/home/esteniopc/Apps/Ark-lang/build",
+  "command": "/usr/bin/c++  -I/home/esteniopc/Apps/Ark-lang/src -g -std=c++23 -Wall -Wextra -O3 -o CMakeFiles/arkc.dir/src/main.cpp.o -c /home/esteniopc/Apps/Ark-lang/src/main.cpp",
+  "file": "/home/esteniopc/Apps/Ark-lang/src/main.cpp",
+  "output": "CMakeFiles/arkc.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/esteniopc/Apps/Ark-lang/build",
+  "command": "/usr/bin/c++  -I/home/esteniopc/Apps/Ark-lang/src -g -std=c++23 -Wall -Wextra -O3 -o CMakeFiles/arkc.dir/src/ModuleManager.cpp.o -c /home/esteniopc/Apps/Ark-lang/src/ModuleManager.cpp",
+  "file": "/home/esteniopc/Apps/Ark-lang/src/ModuleManager.cpp",
+  "output": "CMakeFiles/arkc.dir/src/ModuleManager.cpp.o"
+}
+]

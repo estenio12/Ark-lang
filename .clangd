@@ -1,0 +1,18 @@
+CompileFlags:
+  Add: [
+    "-std=c++23",
+    "-Isrc",          # Garante que ele ache seus headers
+    "-Wall",          # Ativa avisos de erro extras
+    "-Wno-missing-field-initializers"
+  ]
+  Compiler: /usr/bin/g++
+
+Index:
+  Background: Build  # Indexa o projeto em background para o "Go to Definition" ser instantâneo
+
+Diagnostics:
+  UnusedIncludes: Strict # Avisa se você incluir algo que não está usando (ótimo para limpar o projeto)
+  ClangTidy:
+    Add: [bugprone-*, performance-*, readability-*] # Sugere melhorias de performance e segurança
+    Diagnostics:
+    Remove: [readability-redundant-access-specifiers, readability-braces-around-statements]

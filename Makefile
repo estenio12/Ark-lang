@@ -13,4 +13,4 @@ clean:
 	rm -f $(TARGET)
 
 run-test: all
-	$(TARGET).exe ./test/test.ark
+	$(TARGET) ./test/test.ark

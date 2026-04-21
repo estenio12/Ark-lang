@@ -1,2 +1,2 @@
 # teste de comentário
-var test: i8;
+var test: i8 = 10;

@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <vector>
 #include <cstdint>
 #include <memory>
@@ -29,8 +28,7 @@ struct Token
     std::string_view content;
     TokenType type;
     uint32_t line;
-    uint32_t col_start;
-    uint32_t col_end;
+    uint32_t col;
 };
 
 class TokenManager
