@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <memory>
-#include "FileHandler.hpp"
-#include "TokenManager.hpp"
+#include "FileHandler.hpp";
+#include "TokenManager.hpp";
 
 namespace Ark
 {
