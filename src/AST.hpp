@@ -1,7 +1,11 @@
 #pragma once
 
-class AST
+namespace Ark
 {
-    public:
-        AST() = default;
-};
+    class AST
+    {
+        public:
+            AST() = default;
+    };
+}
+

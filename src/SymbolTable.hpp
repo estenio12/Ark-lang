@@ -1,7 +1,10 @@
 #pragma once
 
-class SymbolTable
+namespace Ark
 {
-    public:
-        SymbolTable() = default;
-};
+    class SymbolTable
+    {
+        public:
+           SymbolTable() = default;
+    };
+}

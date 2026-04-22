@@ -1,14 +1,15 @@
 #pragma once
 
 #include <iostream>
-#include <string>
+#include <string_view>
 
 #ifdef _WIN32
-#include <windows.h>
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
 #endif
 
 
-namespace Output
+namespace Ark::Output
 {
     constexpr std::string_view RESET   = "\033[0m";
     constexpr std::string_view RED     = "\033[31m";

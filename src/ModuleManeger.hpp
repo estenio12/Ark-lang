@@ -3,14 +3,15 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <cstdint>
 #include <functional>
 #include <mutex>
 #include "AST.hpp"
 #include "SymbolTable.hpp"
 
-namespace ModuleManager
+namespace Ark
 {
-    enum class EModuleState { WAITING, PROCESSING, READY, FAIL };
+    enum class EModuleState : uint8_t { WAITING, PROCESSING, READY, FAIL };
     
     class ModuleResolutionCaller
     {
@@ -44,7 +45,7 @@ namespace ModuleManager
             bool IsReadyCalledTo(std::shared_ptr<ModuleResolutionCaller> caller) const;
     };
 
-    class Manager
+    class ModuleResolver
     {
         private:
             std::mutex mtx_module_history;
@@ -56,12 +57,12 @@ namespace ModuleManager
             std::map<std::string, std::unique_ptr<AST>> module_ast;
 
         public:
-            Manager() = default;
+            ModuleResolver() = default;
 
         public:
             void ImportResolution(std::shared_ptr<ModuleResolutionCaller> caller);
             std::shared_ptr<ModuleResolutionState> GetResolutionState(const std::string& path);
-            AST* GetASTByPath(const std::string& path) const;
+            Ark::AST* GetASTByPath(const std::string& path) const;
 
         private:
             std::string FormatStack(const std::vector<std::string>& stack);

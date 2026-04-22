@@ -1,18 +1,39 @@
 CompileFlags:
   Add: [
     "-std=c++23",
-    "-Isrc",          # Garante que ele ache seus headers
-    "-Wall",          # Ativa avisos de erro extras
+    "-Isrc",
+    "-Wall",
+    "-Wextra",
     "-Wno-missing-field-initializers"
   ]
-  Compiler: /usr/bin/g++
-
 Index:
-  Background: Build  # Indexa o projeto em background para o "Go to Definition" ser instantâneo
+  Background: Build
 
 Diagnostics:
-  UnusedIncludes: Strict # Avisa se você incluir algo que não está usando (ótimo para limpar o projeto)
+  UnusedIncludes: Strict
   ClangTidy:
-    Add: [bugprone-*, performance-*, readability-*] # Sugere melhorias de performance e segurança
-    Diagnostics:
+    Add: [bugprone-*, performance-*, readability-*]
     Remove: [readability-redundant-access-specifiers, readability-braces-around-statements]
+
+If:
+  Platform: linux
+CompileFlags:
+  CompilationDatabase: build
+  Compiler: /usr/bin/g++
+
+If:
+  Platform: windows
+CompileFlags:
+  CompilationDatabase: build
+  Compiler: C:/msys64/ucrt64/bin/g++.exe
+  Add: [
+    "--query-driver=C:/msys64/ucrt64/bin/g++.exe",
+    "--target=x86_64-w64-windows-gnu",
+    
+    "-isystem", "C:/msys64/ucrt64/include/c++/13.2.0",
+    "-isystem", "C:/msys64/ucrt64/include/c++/13.2.0/x86_64-w64-mingw32",
+    "-isystem", "C:/msys64/ucrt64/include",
+    
+    "-fms-compatibility",
+    "-fcolor-diagnostics"
+  ]
