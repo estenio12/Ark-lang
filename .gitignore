@@ -1,5 +1,7 @@
 compile_commands.json
 .clangd
+test.ps1
+bkp.ps1
 
 build/
 .cache/

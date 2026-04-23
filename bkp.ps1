@@ -1,1 +1,0 @@
-git add . ; git commit -m "backup$(Get-Date -Format 'yyyy-MM-dd')" ; git push
