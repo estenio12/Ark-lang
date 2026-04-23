@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include "FileHandler.hpp"
+#include "Output.hpp"
 
 namespace Ark
 {
@@ -23,7 +24,6 @@ namespace Ark
         END_OF_FILE, 
         UNKNOWN
     };
-
 
     struct Token
     {
@@ -60,6 +60,41 @@ namespace Ark
             {
                 if (cursor < tokens.size()) return tokens[cursor++];
                 return tokens.back();
+            }
+
+            void printTokens()
+            {
+                for(const auto& token : this->tokens)
+                {
+                    Output::Print("Content: ");
+                    Output::Print(token.content);
+                    Output::Print("Type: ");
+                    Output::Print(TokenTypeString(token.type));
+                    Output::Print("Line: ");
+                    Output::Print(std::to_string(token.line));
+                    Output::Print("Col: ");
+                    Output::Print(std::to_string(token.col));
+                    Output::Print("------------------------\n\n");
+                }
+            }
+
+        private:
+            std::string TokenTypeString(TokenType type)
+            {
+                if(type == TokenType::LITERAL_INT) return "LITERAL_INT";
+                if(type == TokenType::LITERAL_INT) return "LITERAL_FLOAT";
+                if(type == TokenType::LITERAL_INT) return "LITERAL_BOOL";
+                if(type == TokenType::LITERAL_INT) return "LITERAL_CHAR";
+                if(type == TokenType::LITERAL_INT) return "LITERAL_STRING";
+                if(type == TokenType::LITERAL_INT) return "KEYWORD";
+                if(type == TokenType::LITERAL_INT) return "OP_ARITHMETIC";
+                if(type == TokenType::LITERAL_INT) return "OP_LOGICAL";
+                if(type == TokenType::LITERAL_INT) return "OP_COMPARISON";
+                if(type == TokenType::LITERAL_INT) return "OP_BITWISE";
+                if(type == TokenType::LITERAL_INT) return "DELIMITER";
+                if(type == TokenType::LITERAL_INT) return "IDENTIFIER";
+                if(type == TokenType::LITERAL_INT) return "END_OF_FILE";
+                return "UNKNOWN";
             }
     };
 }
