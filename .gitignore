@@ -1,5 +1,9 @@
-build
 compile_commands.json
-.cache
-.vscode
 .clangd
+
+build/
+.cache/
+.vscode/
+
+test/arkc
+test/arkc.exe
