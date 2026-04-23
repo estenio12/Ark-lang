@@ -1,6 +1,6 @@
 compile_commands.json
 .clangd
-test.ps1
+test/run-test.ps1
 bkp.ps1
 bkp.sh
 
