@@ -21,7 +21,7 @@ namespace Ark
         constexpr std::string_view TRETURN    = "return";
         constexpr std::string_view TINTERNAL  = "internal";
         constexpr std::string_view TVAR       = "var";
-        constexpr std::string_view Tconstexpr = "constexpr";
+        constexpr std::string_view TCONSTEXPR = "constexpr";
         constexpr std::string_view TEND       = "end";
         constexpr std::string_view TEXTENDS   = "extends";
         constexpr std::string_view TFUN       = "fun";
@@ -47,10 +47,6 @@ namespace Ark
         constexpr std::string_view SUB    = "-";
         constexpr std::string_view MULT   = "*";
         constexpr std::string_view DIV    = "/";
-        constexpr std::string_view ADDEQ  = "+=";
-        constexpr std::string_view SUBEQ  = "-=";
-        constexpr std::string_view MULTEQ = "*=";
-        constexpr std::string_view DIVEQ  = "/=";
     }
 
     namespace OP_LOGICAL
@@ -93,6 +89,10 @@ namespace Ark
         constexpr std::string_view SEMICOLON = ";";
         constexpr std::string_view ARROW     = "->";
         constexpr std::string_view SCOPEACCESS = "::";
+        constexpr std::string_view ADDEQ  = "+=";
+        constexpr std::string_view SUBEQ  = "-=";
+        constexpr std::string_view MULTEQ = "*=";
+        constexpr std::string_view DIVEQ  = "/=";
     }
 
     namespace AST_DEF
