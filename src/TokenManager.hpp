@@ -27,7 +27,7 @@ namespace Ark
 
     struct Token
     {
-        std::string_view content;
+        std::string content;
         TokenType type;
         uint32_t line;
         uint32_t col;
@@ -66,15 +66,15 @@ namespace Ark
             {
                 for(const auto& token : this->tokens)
                 {
-                    Output::Print("Content: ");
+                    Output::Print("\nContent: ");
                     Output::Print(token.content);
-                    Output::Print("Type: ");
+                    Output::Print("\nType: ");
                     Output::Print(TokenTypeString(token.type));
-                    Output::Print("Line: ");
+                    Output::Print("\nLine: ");
                     Output::Print(std::to_string(token.line));
-                    Output::Print("Col: ");
+                    Output::Print("\nCol: ");
                     Output::Print(std::to_string(token.col));
-                    Output::Print("------------------------\n\n");
+                    Output::Print("\n------------------------\n\n");
                 }
             }
 
@@ -82,18 +82,18 @@ namespace Ark
             std::string TokenTypeString(TokenType type)
             {
                 if(type == TokenType::LITERAL_INT) return "LITERAL_INT";
-                if(type == TokenType::LITERAL_INT) return "LITERAL_FLOAT";
-                if(type == TokenType::LITERAL_INT) return "LITERAL_BOOL";
-                if(type == TokenType::LITERAL_INT) return "LITERAL_CHAR";
-                if(type == TokenType::LITERAL_INT) return "LITERAL_STRING";
-                if(type == TokenType::LITERAL_INT) return "KEYWORD";
-                if(type == TokenType::LITERAL_INT) return "OP_ARITHMETIC";
-                if(type == TokenType::LITERAL_INT) return "OP_LOGICAL";
-                if(type == TokenType::LITERAL_INT) return "OP_COMPARISON";
-                if(type == TokenType::LITERAL_INT) return "OP_BITWISE";
-                if(type == TokenType::LITERAL_INT) return "DELIMITER";
-                if(type == TokenType::LITERAL_INT) return "IDENTIFIER";
-                if(type == TokenType::LITERAL_INT) return "END_OF_FILE";
+                if(type == TokenType::LITERAL_FLOAT) return "LITERAL_FLOAT";
+                if(type == TokenType::LITERAL_BOOL) return "LITERAL_BOOL";
+                if(type == TokenType::LITERAL_CHAR) return "LITERAL_CHAR";
+                if(type == TokenType::LITERAL_STRING) return "LITERAL_STRING";
+                if(type == TokenType::KEYWORD) return "KEYWORD";
+                if(type == TokenType::OP_ARITHMETIC) return "OP_ARITHMETIC";
+                if(type == TokenType::OP_LOGICAL) return "OP_LOGICAL";
+                if(type == TokenType::OP_COMPARISON) return "OP_COMPARISON";
+                if(type == TokenType::OP_BITWISE) return "OP_BITWISE";
+                if(type == TokenType::DELIMITER) return "DELIMITER";
+                if(type == TokenType::IDENTIFIER) return "IDENTIFIER";
+                if(type == TokenType::END_OF_FILE) return "END_OF_FILE";
                 return "UNKNOWN";
             }
     };

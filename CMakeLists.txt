@@ -10,7 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES OFF)
 
 if(NOT MSVC)
-    add_compile_options(-Wall -Wextra -O3)
+    add_compile_options(-Wall -Wextra)
 endif()
 
 include_directories(src)

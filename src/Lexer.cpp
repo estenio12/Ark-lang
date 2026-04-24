@@ -6,16 +6,16 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
 {
     int64_t line = 1;
     int64_t col  = 0;
-    uint16_t start_rect = 0;
+    std::string buffer;
+    buffer.reserve(256);
 
-    char letter;
     size_t source_size = file_descriptor->source_code.size();
     for(size_t i = 0; i < source_size; i++)
     {
         col++;
-        letter = source[i];
+        char letter = source[i];
         
-        if(letter == TAB) continue;
+        if(letter == TAB || letter == RETURN) continue;
 
         if(letter == NEW_LINE)
         {
@@ -27,46 +27,54 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
         if(letter == COMMENTARY)
         {
             while (i < source_size && source[i] != NEW_LINE) { i++; }
-            start_rect = ++i;
             continue;
         }
 
         if(letter == WHITESPACE)
         {
-            this->BuildToken(start_rect, i, line, col);
-            start_rect = i + 1;
+            this->BuildToken(this->GetLexeme(buffer), line, col);
             continue;
         }
 
         auto delimiter = IsDelimiter(i);
         if(delimiter > 0)
         {
-            // # Build token with first rect.
-            this->BuildToken(start_rect, i, line, col, Ark::TokenType::DELIMITER);
+            // # Generate token with current buffer.
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            
+            if(delimiter == 1)
+            {
+                this->BuildToken(std::string {letter}, line, col, Ark::TokenType::DELIMITER);
+            }
+            else
+            {
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col, Ark::TokenType::DELIMITER);
+                i++;
+            }
 
-            // # Build token with the delimiter founded.
-            this->BuildToken(i, i + delimiter, line, col, Ark::TokenType::DELIMITER);
-            start_rect = i + 1;
             continue;
         }
+
+        buffer.push_back(letter);
     }
+
+    if(buffer.size())
+        this->BuildToken(this->GetLexeme(buffer), line, col);
 
     return std::move(this->tokens);
 }
 
-void Ark::Lexer::BuildToken(uint16_t start_pos, uint16_t end_pos, uint64_t line, uint64_t col, Ark::TokenType type)
+void Ark::Lexer::BuildToken(std::string lexeme, uint64_t line, uint64_t col, Ark::TokenType type)
 {
-    auto lexeme = this->GetLexeme(start_pos, end_pos);
-
-    if(lexeme[0] == this->WHITESPACE) return;
+    if(lexeme.empty()) return;
 
     Ark::Token token;
-    token.col = col;
+    token.col = col - lexeme.size();
     token.line = line;
     token.content = lexeme;
     
-    Ark::Output::Print(token.content);
-    Ark::Output::Print("\n");
+    // Ark::Output::Print(token.content);
+    // Ark::Output::Print("\n");
 
     if(type == Ark::TokenType::UNKNOWN)
         token.type = this->FindType(token.content);
@@ -76,12 +84,14 @@ void Ark::Lexer::BuildToken(uint16_t start_pos, uint16_t end_pos, uint64_t line,
     this->tokens->PushToken(token);
 }
 
-std::string_view Ark::Lexer::GetLexeme(size_t start, size_t end)
+std::string Ark::Lexer::GetLexeme(std::string& buffer)
 {
-    return this->source.substr(start, end - start);
+    auto lexeme = buffer;
+    buffer.clear();
+    return lexeme;
 }
 
-Ark::TokenType Ark::Lexer::FindType(const std::string_view& target)
+Ark::TokenType Ark::Lexer::FindType(const std::string& target)
 {
     if(Ark::Lexer::IsInteger(target)) return Ark::TokenType::LITERAL_INT;
     if(Ark::Lexer::IsFloat(target)) return Ark::TokenType::LITERAL_FLOAT;
@@ -97,41 +107,7 @@ Ark::TokenType Ark::Lexer::FindType(const std::string_view& target)
     return Ark::TokenType::UNKNOWN;
 }
 
-void Ark::Lexer::PopulateHashsets()
-{
-    this->keywords = {
-        Ark::KEYWORDS::TI8, Ark::KEYWORDS::TI16, Ark::KEYWORDS::TI32, Ark::KEYWORDS::TI64, 
-        Ark::KEYWORDS::TUI8, Ark::KEYWORDS::TUI16, Ark::KEYWORDS::TUI32, Ark::KEYWORDS::TUI64,
-        Ark::KEYWORDS::TF32, Ark::KEYWORDS::TF64, Ark::KEYWORDS::TBOOL, Ark::KEYWORDS::TVOID, 
-        Ark::KEYWORDS::TSTRING, Ark::KEYWORDS::TRETURN, Ark::KEYWORDS::TINTERNAL, Ark::KEYWORDS::TVAR,
-        Ark::KEYWORDS::TCONSTEXPR, Ark::KEYWORDS::TEND, Ark::KEYWORDS::TEXTENDS, Ark::KEYWORDS::TFUN,
-        Ark::KEYWORDS::TMODULE, Ark::KEYWORDS::TIMPORT, Ark::KEYWORDS::TIF, Ark::KEYWORDS::TELIF,
-        Ark::KEYWORDS::TELSE, Ark::KEYWORDS::TFOR, Ark::KEYWORDS::TWHILE, Ark::KEYWORDS::TENUM,
-        Ark::KEYWORDS::TIN, Ark::KEYWORDS::TOF, Ark::KEYWORDS::TEXTERN, Ark::KEYWORDS::TTRUE,
-        Ark::KEYWORDS::TFALSE, Ark::KEYWORDS::TSTRUCT
-    };
-
-    this->op_arithmetic = {
-        Ark::OP_ARITHMETIC::ADD, Ark::OP_ARITHMETIC::DIV, 
-        Ark::OP_ARITHMETIC::MULT, Ark::OP_ARITHMETIC::SUB
-    };
-    
-    this->op_logic = { Ark::OP_LOGICAL::OR, Ark::OP_LOGICAL::AND, Ark::OP_LOGICAL::NOT };
-    
-    this->op_comparison = {
-        Ark::OP_COMPARISON::EQ, Ark::OP_COMPARISON::DIFF, 
-        Ark::OP_COMPARISON::GT, Ark::OP_COMPARISON::LT,
-        Ark::OP_COMPARISON::GTEQ, Ark::OP_COMPARISON::LTEQ,
-    };
-    
-    this->op_bitwise = {
-        Ark::OP_BITWISE::OR, Ark::OP_BITWISE::AND, 
-        Ark::OP_BITWISE::XOR, Ark::OP_BITWISE::NOT,
-        Ark::OP_BITWISE::LSHIFT, Ark::OP_BITWISE::RSHIFT,
-    };
-}
-
-bool Ark::Lexer::IsDigit(const std::string_view& target, uint8_t max_dots)
+bool Ark::Lexer::IsDigit(const std::string& target, uint8_t max_dots)
 {
     if (target.empty()) return false;
 
@@ -156,24 +132,24 @@ bool Ark::Lexer::IsDigit(const std::string_view& target, uint8_t max_dots)
     return max_dots == 0 ? true : (dots_found == max_dots);
 }
 
-bool Ark::Lexer::IsInteger(const std::string_view& target)
+bool Ark::Lexer::IsInteger(const std::string& target)
 {
     return Ark::Lexer::IsDigit(target, 0);
 }
 
-bool Ark::Lexer::IsFloat(const std::string_view& target)
+bool Ark::Lexer::IsFloat(const std::string& target)
 {
     if(!Ark::Lexer::IsDigit(target, 1)) return false;
     if(target.front() == '.' || target.back() == '.') return false;
     return true;
 }
 
-bool Ark::Lexer::IsBoolean(const std::string_view& target)
+bool Ark::Lexer::IsBoolean(const std::string& target)
 {
     return target == Ark::KEYWORDS::TTRUE || target == Ark::KEYWORDS::TFALSE;
 }
 
-bool Ark::Lexer::IsChar(const std::string_view& target)
+bool Ark::Lexer::IsChar(const std::string& target)
 {
     if(target.size() < 3) return false;
     if(target.front() != '\'' || target.back() != '\'') return false;
@@ -183,54 +159,61 @@ bool Ark::Lexer::IsChar(const std::string_view& target)
     return true;
 }
 
-bool Ark::Lexer::IsKeyword(const std::string_view& target)
+bool Ark::Lexer::IsKeyword(const std::string& target)
 {
-    return this->keywords.find(target) != this->keywords.end();
+    return Ark::KEYWORDS::keywords.find(target) != Ark::KEYWORDS::keywords.end();
 }
 
-bool Ark::Lexer::IsOpArithmetic(const std::string_view& target)
+bool Ark::Lexer::IsOpArithmetic(const std::string& target)
 {
-    return this->op_arithmetic.find(target) != this->op_arithmetic.end();
+    return Ark::OP_ARITHMETIC::op_arithmetic.find(target) != Ark::OP_ARITHMETIC::op_arithmetic.end();
 }
 
-bool Ark::Lexer::IsOpLogic(const std::string_view& target)
+bool Ark::Lexer::IsOpLogic(const std::string& target)
 {
-    return this->op_logic.find(target) != this->op_logic.end();
+    return Ark::OP_LOGICAL::op_logic.find(target) != Ark::OP_LOGICAL::op_logic.end();
 }
 
-bool Ark::Lexer::IsOpComparison(const std::string_view& target)
+bool Ark::Lexer::IsOpComparison(const std::string& target)
 {
-    return this->op_comparison.find(target) != this->op_comparison.end();
+    return Ark::OP_COMPARISON::op_comparison.find(target) != Ark::OP_COMPARISON::op_comparison.end();
 }
 
-bool Ark::Lexer::IsOpBitwise(const std::string_view& target)
+bool Ark::Lexer::IsOpBitwise(const std::string& target)
 {
-    return this->op_bitwise.find(target) != this->op_bitwise.end();
+    return Ark::OP_BITWISE::op_bitwise.find(target) != Ark::OP_BITWISE::op_bitwise.end();
 }
 
-uint8_t Ark::Lexer::IsDelimiter(size_t pos)
+uint8_t Ark::Lexer::IsDelimiter(const size_t& index)
 {
-    auto safe_range = (pos + 1) < source.size();
-    if(safe_range && source.substr(pos, 2) == Ark::DELIMITER::ARROW) return 2;
-    if(safe_range && source.substr(pos, 2) == Ark::DELIMITER::SCOPEACCESS) return 2;
-    if(safe_range && source.substr(pos, 2) == Ark::DELIMITER::ADDEQ) return 2;
-    if(safe_range && source.substr(pos, 2) == Ark::DELIMITER::SUBEQ) return 2;
-    if(safe_range && source.substr(pos, 2) == Ark::DELIMITER::MULTEQ) return 2;
-    if(safe_range && source.substr(pos, 2) == Ark::DELIMITER::DIVEQ) return 2;
-    if(source[pos] == Ark::DELIMITER::COMMA[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::COLON[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::LPARAN[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::RPARAN[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::LBRACE[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::RBRACE[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::LBRACKET[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::RBRACKET[0]) return 1;
-    if(source[pos] == Ark::DELIMITER::SEMICOLON[0]) return 1;
+    char letter = source[index];
+    char next = (index + 1 < this->source.size()) ? source[index + 1] : '\0';
+
+    if(next != '\0')
+    {
+        if(Ark::DELIMITER::ARROW[0] == letter && Ark::DELIMITER::ARROW[1] == next) return 2;
+        if(Ark::DELIMITER::ADDEQ[0] == letter && Ark::DELIMITER::ADDEQ[1] == next) return 2;
+        if(Ark::DELIMITER::SUBEQ[0] == letter && Ark::DELIMITER::SUBEQ[1] == next) return 2;
+        if(Ark::DELIMITER::DIVEQ[0] == letter && Ark::DELIMITER::DIVEQ[1] == next) return 2;
+        if(Ark::DELIMITER::MULTEQ[0] == letter && Ark::DELIMITER::MULTEQ[1] == next) return 2;
+        if(Ark::DELIMITER::SCOPEACCESS[0] == letter && Ark::DELIMITER::SCOPEACCESS[1] == next) return 2;
+    }
+
+    if(letter == Ark::DELIMITER::ATTR[0]) return 1;
+    if(letter == Ark::DELIMITER::COMMA[0]) return 1;
+    if(letter == Ark::DELIMITER::COLON[0]) return 1;
+    if(letter == Ark::DELIMITER::LPARAN[0]) return 1;
+    if(letter == Ark::DELIMITER::RPARAN[0]) return 1;
+    if(letter == Ark::DELIMITER::LBRACE[0]) return 1;
+    if(letter == Ark::DELIMITER::RBRACE[0]) return 1;
+    if(letter == Ark::DELIMITER::LBRACKET[0]) return 1;
+    if(letter == Ark::DELIMITER::RBRACKET[0]) return 1;
+    if(letter == Ark::DELIMITER::SEMICOLON[0]) return 1;
 
     return 0;
 }
 
-bool Ark::Lexer::IsIdentifier(const std::string_view& target)
+bool Ark::Lexer::IsIdentifier(const std::string& target)
 {
     if (target.empty()) return false;
 
