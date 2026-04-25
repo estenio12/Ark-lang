@@ -12,8 +12,8 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
     size_t source_size = file_descriptor->source_code.size();
     for(size_t i = 0; i < source_size; i++)
     {
-        col++;
         char letter = source[i];
+        col++;
         
         if(letter == TAB || letter == RETURN) continue;
 
@@ -26,7 +26,12 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
 
         if(letter == COMMENTARY)
         {
-            while (i < source_size && source[i] != NEW_LINE) { i++; }
+            while (i < source_size && source[i] != NEW_LINE) 
+            { 
+                i++; 
+                col = 0;
+            }
+            line++;
             continue;
         }
 
@@ -48,7 +53,7 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             }
             else
             {
-                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col, Ark::TokenType::DELIMITER);
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::DELIMITER);
                 i++;
             }
 

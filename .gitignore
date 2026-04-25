@@ -10,3 +10,4 @@ build/
 test/arkc
 test/arkc.exe
 test/run-test.ps1
+test/run-test.sh

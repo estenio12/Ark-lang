@@ -1,7 +1,7 @@
 #include "ModuleManeger.hpp"
 #include "Output.hpp"
 
-#pragma region MODULE MANAGER
+// #region MODULE MANAGER
 
 void Ark::ModuleResolver::ImportResolution(std::shared_ptr<Ark::ModuleResolutionCaller> caller)
 {
@@ -71,9 +71,9 @@ std::string Ark::ModuleResolver::FormatStack(const std::vector<std::string>& sta
     return circular_history;
 }
 
-#pragma endregion
+// #endregion
 
-#pragma region MODULO RESOLUTION STATE
+//#region MODULO RESOLUTION STATE
 
 void Ark::ModuleResolutionState::UpdateState(Ark::EModuleState pstate)
 {
@@ -108,4 +108,4 @@ bool Ark::ModuleResolutionState::IsReadyCalledTo(std::shared_ptr<Ark::ModuleReso
     return false;
 }
 
-#pragma endregion
+//#endregion
