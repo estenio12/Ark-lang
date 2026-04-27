@@ -82,17 +82,10 @@ namespace Ark
 
     namespace OP_ARITHMETIC
     {
-        const std::string ADD    = "+";
-        const std::string SUB    = "-";
-        const std::string MULT   = "*";
-        const std::string DIV    = "/";
-
-        inline const std::unordered_set<std::string> op_arithmetic = {
-            Ark::OP_ARITHMETIC::ADD, 
-            Ark::OP_ARITHMETIC::DIV, 
-            Ark::OP_ARITHMETIC::MULT, 
-            Ark::OP_ARITHMETIC::SUB
-        };
+        constexpr std::string ADD = "+";
+        constexpr std::string SUB = "-";
+        constexpr std::string MUL = "*";
+        constexpr std::string DIV = "/";
     }
 
     namespace OP_LOGICAL
@@ -100,12 +93,6 @@ namespace Ark
         const std::string OR  = "||";
         const std::string AND = "&&";
         const std::string NOT = "!";
-
-        inline const std::unordered_set<std::string> op_logic ={
-            Ark::OP_LOGICAL::OR, 
-            Ark::OP_LOGICAL::AND, 
-            Ark::OP_LOGICAL::NOT 
-        };
     }
 
     namespace OP_COMPARISON

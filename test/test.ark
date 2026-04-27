@@ -1,4 +1,4 @@
 # teste de comentário
-var t1: char = 'a'; 
+var t1: char = 'a' + 10; 
 var t2: string = "Hello World!";
 

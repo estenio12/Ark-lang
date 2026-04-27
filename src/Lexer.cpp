@@ -91,7 +91,6 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
         auto delimiter = IsDelimiter(i);
         if(delimiter > 0)
         {
-            // # Generate token with current buffer.
             this->BuildToken(this->GetLexeme(buffer), line, col);
             
             if(delimiter == 1)
@@ -107,7 +106,29 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             continue;
         }
 
+        if(IsOpArithmetic(letter))
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            this->BuildToken(std::string{letter}, line, col, Ark::TokenType::OP_ARITHMETIC);
+            continue;
+        }
 
+        if(IsOpLogic(i))
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            
+            if(delimiter == 1)
+            {
+                this->BuildToken(std::string {letter}, line, col + 1, Ark::TokenType::OP_LOGICAL);
+            }
+            else
+            {
+                this->BuildToken(std::string { letter, this->source[i + 2] }, line, col + 1, Ark::TokenType::OP_LOGICAL);
+                i++;
+            }
+
+            continue;
+        }
 
         buffer.push_back(letter);
     }
@@ -150,10 +171,6 @@ Ark::TokenType Ark::Lexer::FindType(const std::string& target)
     if(Ark::Lexer::IsChar(target)) return Ark::TokenType::LITERAL_CHAR;
     if(Ark::Lexer::IsKeyword(target)) return Ark::TokenType::KEYWORD;
     if(Ark::Lexer::IsString(target)) return Ark::TokenType::LITERAL_STRING;
-    if(Ark::Lexer::IsOpArithmetic(target)) return Ark::TokenType::OP_ARITHMETIC;
-    if(Ark::Lexer::IsOpLogic(target)) return Ark::TokenType::OP_LOGICAL;
-    if(Ark::Lexer::IsOpComparison(target)) return Ark::TokenType::OP_COMPARISON;
-    if(Ark::Lexer::IsOpBitwise(target)) return Ark::TokenType::OP_BITWISE;
     if(Ark::Lexer::IsIdentifier(target)) return Ark::TokenType::IDENTIFIER;
 
     return Ark::TokenType::UNKNOWN;
@@ -214,14 +231,33 @@ bool Ark::Lexer::IsKeyword(const std::string& target)
     return Ark::KEYWORDS::keywords.find(target) != Ark::KEYWORDS::keywords.end();
 }
 
-bool Ark::Lexer::IsOpArithmetic(const std::string& target)
+bool Ark::Lexer::IsOpArithmetic(const char& target)
 {
-    return Ark::OP_ARITHMETIC::op_arithmetic.find(target) != Ark::OP_ARITHMETIC::op_arithmetic.end();
+    switch (target) 
+    {
+        case Ark::OP_ARITHMETIC::ADD[0]:
+        case Ark::OP_ARITHMETIC::SUB[0]:
+        case Ark::OP_ARITHMETIC::MUL[0]:
+        case Ark::OP_ARITHMETIC::DIV[0]:
+            return true;
+        default:
+            return false;
+    }
 }
 
-bool Ark::Lexer::IsOpLogic(const std::string& target)
+uint8_t Ark::Lexer::IsOpLogic(const size_t& index)
 {
-    return Ark::OP_LOGICAL::op_logic.find(target) != Ark::OP_LOGICAL::op_logic.end();
+    char letter = source[index];
+    char next = (index + 1 < this->source.size()) ? source[index + 1] : '\0';
+
+    if(next != '\0')
+    {
+        if(Ark::OP_LOGICAL::OR[0] == letter && Ark::OP_LOGICAL::OR[1] == next) return 2;
+        if(Ark::OP_LOGICAL::AND[0] == letter && Ark::OP_LOGICAL::AND[1] == next) return 2;
+    }
+
+    if(letter == Ark::OP_LOGICAL::NOT[0]) return 1;
+    return 0;
 }
 
 bool Ark::Lexer::IsOpComparison(const std::string& target)
