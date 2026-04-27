@@ -13,7 +13,8 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
     for(size_t i = 0; i < source_size; i++)
     {
         char letter = source[i];
-        col++;
+        
+        if ((static_cast<unsigned char>(letter) & 0xC0) != 0x80) col++;
         
         if(letter == TAB || letter == RETURN) continue;
 
@@ -41,29 +42,77 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             continue;
         }
 
+        if(letter == Ark::DELIMITER::QUOTE[0])
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+
+            std::string slice {letter};
+            bool is_escaped = false;
+            while((i + 1) < source_size)
+            {
+                i++; col++;
+                char current = source[i];
+                slice.push_back(current);
+
+                if (current == Ark::DELIMITER::QUOTE[0] && !is_escaped) break;
+
+                if (current == '\\')
+                    is_escaped = !is_escaped;
+                else
+                    is_escaped = false;
+            }
+            this->BuildToken(this-> GetLexeme(slice), line, col);
+            continue;
+        }
+
+        if(letter == Ark::DELIMITER::DOUBLEQUOTE[0])
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col -1 );
+
+            std::string slice {letter};
+            bool is_escaped = false;
+            while((i + 1) < source_size)
+            {
+                i++; col++;
+                char current = source[i];
+                slice.push_back(current);
+
+                if (current == Ark::DELIMITER::DOUBLEQUOTE[0] && !is_escaped) break;
+
+                if (current == '\\')
+                    is_escaped = !is_escaped;
+                else
+                    is_escaped = false;
+            }
+            this->BuildToken(this-> GetLexeme(slice), line, col);
+            continue;
+        }
+
         auto delimiter = IsDelimiter(i);
         if(delimiter > 0)
         {
             // # Generate token with current buffer.
-            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            this->BuildToken(this->GetLexeme(buffer), line, col);
             
             if(delimiter == 1)
             {
-                this->BuildToken(std::string {letter}, line, col, Ark::TokenType::DELIMITER);
+                this->BuildToken(std::string {letter}, line, col + 1, Ark::TokenType::DELIMITER);
             }
             else
             {
-                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::DELIMITER);
+                this->BuildToken(std::string { letter, this->source[i + 2] }, line, col + 1, Ark::TokenType::DELIMITER);
                 i++;
             }
 
             continue;
         }
 
+
+
         buffer.push_back(letter);
     }
 
-    if(buffer.size())
+    if(buffer.size() > 0)
         this->BuildToken(this->GetLexeme(buffer), line, col);
 
     return std::move(this->tokens);
@@ -77,9 +126,6 @@ void Ark::Lexer::BuildToken(std::string lexeme, uint64_t line, uint64_t col, Ark
     token.col = col - lexeme.size();
     token.line = line;
     token.content = lexeme;
-    
-    // Ark::Output::Print(token.content);
-    // Ark::Output::Print("\n");
 
     if(type == Ark::TokenType::UNKNOWN)
         token.type = this->FindType(token.content);
@@ -103,6 +149,7 @@ Ark::TokenType Ark::Lexer::FindType(const std::string& target)
     if(Ark::Lexer::IsBoolean(target)) return Ark::TokenType::LITERAL_BOOL;
     if(Ark::Lexer::IsChar(target)) return Ark::TokenType::LITERAL_CHAR;
     if(Ark::Lexer::IsKeyword(target)) return Ark::TokenType::KEYWORD;
+    if(Ark::Lexer::IsString(target)) return Ark::TokenType::LITERAL_STRING;
     if(Ark::Lexer::IsOpArithmetic(target)) return Ark::TokenType::OP_ARITHMETIC;
     if(Ark::Lexer::IsOpLogic(target)) return Ark::TokenType::OP_LOGICAL;
     if(Ark::Lexer::IsOpComparison(target)) return Ark::TokenType::OP_COMPARISON;
@@ -158,8 +205,6 @@ bool Ark::Lexer::IsChar(const std::string& target)
 {
     if(target.size() < 3) return false;
     if(target.front() != '\'' || target.back() != '\'') return false;
-    if(target.size() == 3) return target[1] != '\\';
-    if(target.size() == 4) return target[1] == '\\';
 
     return true;
 }
@@ -214,6 +259,8 @@ uint8_t Ark::Lexer::IsDelimiter(const size_t& index)
     if(letter == Ark::DELIMITER::LBRACKET[0]) return 1;
     if(letter == Ark::DELIMITER::RBRACKET[0]) return 1;
     if(letter == Ark::DELIMITER::SEMICOLON[0]) return 1;
+    if(letter == Ark::DELIMITER::QUOTE[0]) return 1;
+    if(letter == Ark::DELIMITER::DOUBLEQUOTE[0]) return 1;
 
     return 0;
 }
@@ -241,4 +288,12 @@ bool Ark::Lexer::IsIdentifier(const std::string& target)
     }
 
     return true;
+}
+
+bool Ark::Lexer::IsString(const std::string& target)
+{
+    if(target.size() < 2) return false;
+    char quote = Ark::DELIMITER::DOUBLEQUOTE[0];
+    if(target.front() == quote && target.back() == quote) return true;
+    return false;
 }

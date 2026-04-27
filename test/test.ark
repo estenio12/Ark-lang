@@ -1,2 +1,4 @@
 # teste de comentário
-var test: i8 = 10;
+var t1: char = 'a'; 
+var t2: string = "Hello World!";
+

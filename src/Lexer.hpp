@@ -37,6 +37,7 @@ namespace Ark
             bool IsFloat(const std::string& target);
             bool IsBoolean(const std::string& target);
             bool IsChar(const std::string& target);
+            bool IsString(const std::string& target);
             uint8_t IsDelimiter(const size_t& index);
             bool IsKeyword(const std::string& target);
             bool IsOpArithmetic(const std::string& target);

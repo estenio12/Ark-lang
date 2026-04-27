@@ -15,13 +15,14 @@ namespace Ark
         const std::string TUI64      = "ui64";
         const std::string TF32       = "f32";
         const std::string TF64       = "f64";
+        const std::string TCHAR      = "char";
         const std::string TBOOL      = "bool";
         const std::string TVOID      = "void";
         const std::string TSTRING    = "string";
         const std::string TRETURN    = "return";
         const std::string TINTERNAL  = "internal";
         const std::string TVAR       = "var";
-        const std::string Tconst = "const";
+        const std::string TCONST     = "const";
         const std::string TEND       = "end";
         const std::string TEXTENDS   = "extends";
         const std::string TFUN       = "fun";
@@ -51,13 +52,14 @@ namespace Ark
             Ark::KEYWORDS::TUI64,
             Ark::KEYWORDS::TF32,
             Ark::KEYWORDS::TF64,
+            Ark::KEYWORDS::TCHAR,
             Ark::KEYWORDS::TBOOL,
             Ark::KEYWORDS::TVOID,
             Ark::KEYWORDS::TSTRING,
             Ark::KEYWORDS::TRETURN,
             Ark::KEYWORDS::TINTERNAL,
             Ark::KEYWORDS::TVAR,
-            Ark::KEYWORDS::Tconst,
+            Ark::KEYWORDS::TCONST,
             Ark::KEYWORDS::TEND,
             Ark::KEYWORDS::TEXTENDS,
             Ark::KEYWORDS::TFUN,
@@ -162,6 +164,8 @@ namespace Ark
         const std::string SUBEQ  = "-=";
         const std::string MULTEQ = "*=";
         const std::string DIVEQ  = "/=";
+        const std::string QUOTE  = "'";
+        const std::string DOUBLEQUOTE = "\"";
     }
 
     namespace AST_DEF
