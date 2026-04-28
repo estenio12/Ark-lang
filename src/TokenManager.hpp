@@ -17,6 +17,7 @@ namespace Ark
         KEYWORD,
         OP_ARITHMETIC,
         OP_LOGICAL,
+        OP_ASSIGNMENT,
         OP_COMPARISON,
         OP_BITWISE,
         DELIMITER,
@@ -89,6 +90,7 @@ namespace Ark
                 if(type == TokenType::KEYWORD) return "KEYWORD";
                 if(type == TokenType::OP_ARITHMETIC) return "OP_ARITHMETIC";
                 if(type == TokenType::OP_LOGICAL) return "OP_LOGICAL";
+                if(type == TokenType::OP_ASSIGNMENT) return "OP_ASSIGNMENT";
                 if(type == TokenType::OP_COMPARISON) return "OP_COMPARISON";
                 if(type == TokenType::OP_BITWISE) return "OP_BITWISE";
                 if(type == TokenType::DELIMITER) return "DELIMITER";

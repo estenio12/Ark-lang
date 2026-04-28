@@ -1,4 +1,3 @@
 # teste de comentário
-var t1: char = 'a' + 10; 
-var t2: string = "Hello World!";
+var t1: bool += 10 != 40 || 15 == 13;
 

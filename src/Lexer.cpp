@@ -99,7 +99,7 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             }
             else
             {
-                this->BuildToken(std::string { letter, this->source[i + 2] }, line, col + 1, Ark::TokenType::DELIMITER);
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::DELIMITER);
                 i++;
             }
 
@@ -113,17 +113,72 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             continue;
         }
 
-        if(IsOpLogic(i))
+        auto logical = IsOpLogic(i);
+        if(logical > 0)
         {
             this->BuildToken(this->GetLexeme(buffer), line, col - 1);
             
-            if(delimiter == 1)
+            if(logical == 1)
             {
                 this->BuildToken(std::string {letter}, line, col + 1, Ark::TokenType::OP_LOGICAL);
             }
             else
             {
-                this->BuildToken(std::string { letter, this->source[i + 2] }, line, col + 1, Ark::TokenType::OP_LOGICAL);
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::OP_LOGICAL);
+                i++;
+            }
+
+            continue;
+        }
+
+        auto assignment = IsOpAssignment(i);
+        if(assignment > 0)
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            
+            if(assignment == 1)
+            {
+                this->BuildToken(std::string {letter}, line, col + 1, Ark::TokenType::OP_ASSIGNMENT);
+            }
+            else
+            {
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::OP_ASSIGNMENT);
+                i++;
+            }
+
+            continue;
+        }
+
+        auto comparison = IsOpComparison(i);
+        if(comparison > 0)
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            
+            if(comparison == 1)
+            {
+                this->BuildToken(std::string {letter}, line, col + 1, Ark::TokenType::OP_COMPARISON);
+            }
+            else
+            {
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::OP_COMPARISON);
+                i++;
+            }
+
+            continue;
+        }
+
+        auto bitwise = IsOpBitwise(i);
+        if(bitwise > 0)
+        {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
+            
+            if(bitwise == 1)
+            {
+                this->BuildToken(std::string {letter}, line, col + 1, Ark::TokenType::OP_BITWISE);
+            }
+            else
+            {
+                this->BuildToken(std::string { letter, this->source[i + 1] }, line, col + 1, Ark::TokenType::OP_BITWISE);
                 i++;
             }
 
@@ -256,18 +311,44 @@ uint8_t Ark::Lexer::IsOpLogic(const size_t& index)
         if(Ark::OP_LOGICAL::AND[0] == letter && Ark::OP_LOGICAL::AND[1] == next) return 2;
     }
 
-    if(letter == Ark::OP_LOGICAL::NOT[0]) return 1;
+    if(letter == Ark::OP_LOGICAL::NOT[0] && next != Ark::OP_ASSIGNMENT::ASSIGN[0]) return 1;
     return 0;
 }
 
-bool Ark::Lexer::IsOpComparison(const std::string& target)
+uint8_t Ark::Lexer::IsOpComparison(const size_t& index)
 {
-    return Ark::OP_COMPARISON::op_comparison.find(target) != Ark::OP_COMPARISON::op_comparison.end();
+    char letter = source[index];
+    char next = (index + 1 < this->source.size()) ? source[index + 1] : '\0';
+
+    if(next != '\0')
+    {
+        if(Ark::OP_COMPARISON::EQ[0]   == letter && Ark::OP_COMPARISON::EQ[1]   == next) return 2;
+        if(Ark::OP_COMPARISON::DIFF[0] == letter && Ark::OP_COMPARISON::DIFF[1] == next) return 2;
+        if(Ark::OP_COMPARISON::GTEQ[0] == letter && Ark::OP_COMPARISON::GTEQ[1] == next) return 2;
+        if(Ark::OP_COMPARISON::LTEQ[0] == letter && Ark::OP_COMPARISON::LTEQ[1] == next) return 2;
+    }
+
+    if(letter == Ark::OP_COMPARISON::GT[0]) return 1;
+    if(letter == Ark::OP_COMPARISON::LT[0]) return 1;
+    return 0;
 }
 
-bool Ark::Lexer::IsOpBitwise(const std::string& target)
+uint8_t Ark::Lexer::IsOpBitwise(const size_t& index)
 {
-    return Ark::OP_BITWISE::op_bitwise.find(target) != Ark::OP_BITWISE::op_bitwise.end();
+    char letter = source[index];
+    char next = (index + 1 < this->source.size()) ? source[index + 1] : '\0';
+
+    if(next != '\0')
+    {
+        if(Ark::OP_BITWISE::LSHIFT[0] == letter && Ark::OP_BITWISE::LSHIFT[1] == next) return 2;
+        if(Ark::OP_BITWISE::RSHIFT[0] == letter && Ark::OP_BITWISE::RSHIFT[1] == next) return 2;
+    }
+
+    if(letter == Ark::OP_BITWISE::OR[0])  return 1;
+    if(letter == Ark::OP_BITWISE::AND[0]) return 1;
+    if(letter == Ark::OP_BITWISE::XOR[0]) return 1;
+    if(letter == Ark::OP_BITWISE::NOT[0]) return 1;
+    return 0;
 }
 
 uint8_t Ark::Lexer::IsDelimiter(const size_t& index)
@@ -278,14 +359,9 @@ uint8_t Ark::Lexer::IsDelimiter(const size_t& index)
     if(next != '\0')
     {
         if(Ark::DELIMITER::ARROW[0] == letter && Ark::DELIMITER::ARROW[1] == next) return 2;
-        if(Ark::DELIMITER::ADDEQ[0] == letter && Ark::DELIMITER::ADDEQ[1] == next) return 2;
-        if(Ark::DELIMITER::SUBEQ[0] == letter && Ark::DELIMITER::SUBEQ[1] == next) return 2;
-        if(Ark::DELIMITER::DIVEQ[0] == letter && Ark::DELIMITER::DIVEQ[1] == next) return 2;
-        if(Ark::DELIMITER::MULTEQ[0] == letter && Ark::DELIMITER::MULTEQ[1] == next) return 2;
         if(Ark::DELIMITER::SCOPEACCESS[0] == letter && Ark::DELIMITER::SCOPEACCESS[1] == next) return 2;
     }
 
-    if(letter == Ark::DELIMITER::ATTR[0]) return 1;
     if(letter == Ark::DELIMITER::COMMA[0]) return 1;
     if(letter == Ark::DELIMITER::COLON[0]) return 1;
     if(letter == Ark::DELIMITER::LPARAN[0]) return 1;
@@ -297,6 +373,24 @@ uint8_t Ark::Lexer::IsDelimiter(const size_t& index)
     if(letter == Ark::DELIMITER::SEMICOLON[0]) return 1;
     if(letter == Ark::DELIMITER::QUOTE[0]) return 1;
     if(letter == Ark::DELIMITER::DOUBLEQUOTE[0]) return 1;
+
+    return 0;
+}
+
+uint8_t Ark::Lexer::IsOpAssignment(const size_t& index)
+{
+    char letter = source[index];
+    char next = (index + 1 < this->source.size()) ? source[index + 1] : '\0';
+
+    if(next != '\0')
+    {
+        if(Ark::OP_ASSIGNMENT::ADDASSIGN[0] == letter && Ark::OP_ASSIGNMENT::ADDASSIGN[1] == next) return 2;
+        if(Ark::OP_ASSIGNMENT::SUBASSIGN[0] == letter && Ark::OP_ASSIGNMENT::SUBASSIGN[1] == next) return 2;
+        if(Ark::OP_ASSIGNMENT::DIVASSIGN[0] == letter && Ark::OP_ASSIGNMENT::DIVASSIGN[1] == next) return 2;
+        if(Ark::OP_ASSIGNMENT::MULTASSIGN[0] == letter && Ark::OP_ASSIGNMENT::MULTASSIGN[1] == next) return 2;
+    }
+
+    if(letter == Ark::OP_ASSIGNMENT::ASSIGN[0] && next != Ark::OP_ASSIGNMENT::ASSIGN[0]) return 1;
 
     return 0;
 }

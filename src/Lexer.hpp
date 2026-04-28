@@ -38,12 +38,13 @@ namespace Ark
             bool IsBoolean(const std::string& target);
             bool IsChar(const std::string& target);
             bool IsString(const std::string& target);
-            uint8_t IsDelimiter(const size_t& index);
             bool IsKeyword(const std::string& target);
             bool IsOpArithmetic(const char& target);
+            uint8_t IsDelimiter(const size_t& index);
             uint8_t IsOpLogic(const size_t& index);
-            bool IsOpComparison(const std::string& target);
-            bool IsOpBitwise(const std::string& target);
+            uint8_t IsOpComparison(const size_t& index);
+            uint8_t IsOpBitwise(const size_t& index);
+            uint8_t IsOpAssignment(const size_t& index);
             bool IsIdentifier(const std::string& target);
 
         private:

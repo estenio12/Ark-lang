@@ -103,15 +103,15 @@ namespace Ark
         const std::string LT   = "<";
         const std::string GTEQ = ">=";
         const std::string LTEQ = "<=";
+    }
 
-        inline const std::unordered_set<std::string> op_comparison = {
-            Ark::OP_COMPARISON::EQ, 
-            Ark::OP_COMPARISON::DIFF, 
-            Ark::OP_COMPARISON::GT, 
-            Ark::OP_COMPARISON::LT,
-            Ark::OP_COMPARISON::GTEQ, 
-            Ark::OP_COMPARISON::LTEQ,
-        };
+    namespace OP_ASSIGNMENT
+    {
+        const std::string ASSIGN     = "=";
+        const std::string ADDASSIGN  = "+=";
+        const std::string SUBASSIGN  = "-=";
+        const std::string MULTASSIGN = "*=";
+        const std::string DIVASSIGN  = "/=";
     }
 
     namespace OP_BITWISE
@@ -122,20 +122,10 @@ namespace Ark
         const std::string NOT    = "~";
         const std::string LSHIFT = "<<";
         const std::string RSHIFT = ">>";
-
-        inline const std::unordered_set<std::string> op_bitwise = {
-            Ark::OP_BITWISE::OR, 
-            Ark::OP_BITWISE::AND, 
-            Ark::OP_BITWISE::XOR, 
-            Ark::OP_BITWISE::NOT,
-            Ark::OP_BITWISE::LSHIFT, 
-            Ark::OP_BITWISE::RSHIFT,
-        };
     }
 
     namespace DELIMITER
     {
-        const std::string ATTR      = "=";
         const std::string COMMA     = ",";
         const std::string COLON     = ":";
         const std::string LPARAN    = "(";
@@ -147,10 +137,6 @@ namespace Ark
         const std::string SEMICOLON = ";";
         const std::string ARROW     = "->";
         const std::string SCOPEACCESS = "::";
-        const std::string ADDEQ  = "+=";
-        const std::string SUBEQ  = "-=";
-        const std::string MULTEQ = "*=";
-        const std::string DIVEQ  = "/=";
         const std::string QUOTE  = "'";
         const std::string DOUBLEQUOTE = "\"";
     }
