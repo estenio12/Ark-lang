@@ -191,6 +191,7 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
     if(buffer.size() > 0)
         this->BuildToken(this->GetLexeme(buffer), line, col);
 
+    this->tokens->printTokens();
     return std::move(this->tokens);
 }
 

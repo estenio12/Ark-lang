@@ -3,15 +3,17 @@
 #include "Output.hpp"
 #include "ModuleManeger.hpp"
 #include "CoreCompile.hpp"
+#include "CompilerArguments.hpp"
 
 int main(int argc, char** argv)
 {
     auto timer_start = std::chrono::high_resolution_clock::now();
     Ark::Output::Initialize();
+    Ark::CompilerArguments::BuildArguments(argc, argv);
 
     if(argc <= 1)
     {
-        Ark::Output::ThrowFatalError("Main file path is expected as an argument.");
+        Ark::Output::ThrowFatalError("The path to the main file is expected as an argument.");
         exit(1);
     }
 

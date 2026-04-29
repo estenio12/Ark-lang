@@ -2,8 +2,10 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include <fstream>
 #include "FileHandler.hpp"
 #include "Output.hpp"
+#include "GlobalFlags.hpp"
 
 namespace Ark
 {
@@ -65,18 +67,36 @@ namespace Ark
 
             void printTokens()
             {
+                if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::NONE) return;
+                std::fstream file(Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE, std::ios::out);
+
                 for(const auto& token : this->tokens)
                 {
-                    Output::Print("\nContent: ");
-                    Output::Print(token.content);
-                    Output::Print("\nType: ");
-                    Output::Print(TokenTypeString(token.type));
-                    Output::Print("\nLine: ");
-                    Output::Print(std::to_string(token.line));
-                    Output::Print("\nCol: ");
-                    Output::Print(std::to_string(token.col));
-                    Output::Print("\n------------------------\n\n");
+                    std::string outtoken;
+                    outtoken += "\nContent: ";
+                    outtoken += token.content;
+                    outtoken += "\nType: ";
+                    outtoken += TokenTypeString(token.type);
+                    outtoken += "\nLine: ";
+                    outtoken += std::to_string(token.line);
+                    outtoken += "\nCol: ";
+                    outtoken += std::to_string(token.col);
+                    outtoken += "\n------------------------\n\n";
+
+                    if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::STDOUT)
+                    {
+                        Ark::Output::Print(outtoken);
+                    }
+                    else
+                    {
+                        if(file.is_open() && file.good())
+                        {
+                            file << outtoken;
+                        }
+                    }
                 }
+
+                file.close();
             }
 
         private:
