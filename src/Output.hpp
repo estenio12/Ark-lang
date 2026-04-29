@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <string_view>
 
 #ifdef _WIN32
     #define WIN32_LEAN_AND_MEAN
@@ -11,12 +10,12 @@
 
 namespace Ark::Output
 {
-    constexpr std::string_view RESET   = "\033[0m";
-    constexpr std::string_view RED     = "\033[31m";
-    constexpr std::string_view GREEN   = "\033[32m";
-    constexpr std::string_view YELLOW  = "\033[33m";
-    constexpr std::string_view BOLD    = "\033[1m";
-    constexpr std::string_view BLUE    = "\033[34m";
+    const std::string RESET   = "\033[0m";
+    const std::string RED     = "\033[31m";
+    const std::string GREEN   = "\033[32m";
+    const std::string YELLOW  = "\033[33m";
+    const std::string BOLD    = "\033[1m";
+    const std::string BLUE    = "\033[34m";
 
     inline void Initialize() 
     {
@@ -31,32 +30,32 @@ namespace Ark::Output
         #endif
     }
 
-    inline void Print(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void Print(std::string message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << message << RESET << (break_line ? "\n" : "");
     }
     
-    inline void PrintError(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintError(std::string message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << RED << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void PrintSuccess(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintSuccess(std::string message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << GREEN << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void PrintWarn(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintWarn(std::string message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << YELLOW << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void PrintInfo(std::string_view message, bool break_line = false, bool use_bold = false)
+    inline void PrintInfo(std::string message, bool break_line = false, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << BLUE << message << RESET << (break_line ? "\n" : "");
     }
 
-    [[noreturn]] inline void ThrowFatalError(std::string_view message)
+    [[noreturn]] inline void ThrowFatalError(std::string message)
     {
         Output::PrintError(message, true, true);
         exit(1);

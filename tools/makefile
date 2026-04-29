@@ -1,2 +1,2 @@
 compiling:
-	g++ ./*.cpp -o ../test/arkt
+	g++ ./*.cpp -o ../test/TestRunner
