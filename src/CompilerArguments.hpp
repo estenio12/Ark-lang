@@ -23,6 +23,7 @@ namespace Ark::CompilerArguments
 {
     void BuildArguments(int argc, char** args)
     {
+        Ark::Output::Print("Opa");
         if(argc < 2) return;
         
         for(int i = 1; i < argc; i++)

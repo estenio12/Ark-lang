@@ -1,5 +1,0 @@
-types.ark=types.exp
-types.ark=types.exp
-types.ark=types.exp
-types.ark=types.exp
-types.ark=types.exp
