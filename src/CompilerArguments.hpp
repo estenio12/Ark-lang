@@ -23,12 +23,28 @@ namespace Ark::CompilerArguments
 {
     void BuildArguments(int argc, char** args)
     {
-        Ark::Output::Print("Opa");
         if(argc < 2) return;
         
         for(int i = 1; i < argc; i++)
         {
-            Ark::Output::Print("Compiler arguments: " + std::string(args[i]));
+            auto cmd = std::string(args[i]);
+
+            // # Mark the output compilation path.
+            if(cmd == "--o")
+            {
+                if(!((i + 1) < argc)) Ark::Output::ThrowFatalError("The output file path not passed");
+                Ark::Global::Flags::OUTPUT_COMPILATION_FILE = std::string(args[i + 1]);
+                i++;
+            }
+
+            // # Mark to print lexer result into output.
+            if(cmd == "--plex")
+            {
+                if(!((i + 1) < argc)) Ark::Output::ThrowFatalError("The plex output file path not passed");
+                Ark::Global::Flags::PRINT_LEXER_OUTPUT = Ark::Global::Flags::OUTPUT_FLAG::FILE;
+                Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE = std::string(args[i + 1]);
+                i++;
+            }
         }
     }
 }

@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <memory>
 #include <fstream>
+#include <sstream>
 #include "FileHandler.hpp"
 #include "Output.hpp"
 #include "GlobalFlags.hpp"
@@ -83,35 +84,30 @@ namespace Ark
             void printTokens()
             {
                 if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::NONE) return;
-                std::fstream file(Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE, std::ios::out);
 
+                std::stringstream ss;
                 for(const auto& token : this->tokens)
                 {
-                    std::string outtoken;
-                    outtoken += "\nContent: ";
-                    outtoken += token.content;
-                    outtoken += "\nType: ";
-                    outtoken += TokenTypeString(token.type);
-                    outtoken += "\nLine: ";
-                    outtoken += std::to_string(token.line);
-                    outtoken += "\nCol: ";
-                    outtoken += std::to_string(token.col);
-                    outtoken += "\n------------------------\n\n";
-
-                    if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::STDOUT)
-                    {
-                        Ark::Output::Print(outtoken);
-                    }
-                    else
-                    {
-                        if(file.is_open() && file.good())
-                        {
-                            file << outtoken;
-                        }
-                    }
+                    ss << "\nContent: " << token.content
+                       << "\nType: " << TokenTypeString(token.type)
+                       << "\nLine: " << token.line
+                       << "\nCol: "  << token.col
+                       << "\n------------------------\n\n";
                 }
 
-                file.close();
+                if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::FILE)
+                {
+                    size_t hashValue = std::hash<std::string>{}(ss.str());
+                    std::ofstream file(Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE, std::ios::binary);
+                    if(file.is_open())
+                    {
+                        file << std::hex << hashValue << "\n";
+                        file << ss.rdbuf();
+                    }
+                    file.close();
+                }
+                else
+                    Ark::Output::Print(ss.str());
             }
 
         private:
