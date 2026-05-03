@@ -21,31 +21,86 @@
 
 namespace Ark::CompilerArguments
 {
+    void PrintVersion();
+    void PrintHelp();
+
     void BuildArguments(int argc, char** args)
     {
         if(argc < 2) return;
         
         for(int i = 1; i < argc; i++)
         {
-            auto cmd = std::string(args[i]);
+            std::string_view cmd = args[i];
 
-            // # Mark the output compilation path.
-            if(cmd == "--o")
+            if(cmd == "--f")
             {
-                if(!((i + 1) < argc)) Ark::Output::ThrowFatalError("The output file path not passed");
-                Ark::Global::Flags::OUTPUT_COMPILATION_FILE = std::string(args[i + 1]);
-                i++;
+                if(i + 1 >= argc) Ark::Output::ThrowFatalError("CompilerArguments", "The source file path not passed");
+                Ark::Global::Flags::SOURCE_FILE = args[++i];
             }
-
-            // # Mark to print lexer result into output.
-            if(cmd == "--plex")
+            else if(cmd == "--o" || cmd == "-o" || cmd == "--out" || cmd == "--output")
             {
-                if(!((i + 1) < argc)) Ark::Output::ThrowFatalError("The plex output file path not passed");
+                if(i + 1 >= argc) Ark::Output::ThrowFatalError("CompilerArguments", "The output file path not passed");
+                Ark::Global::Flags::OUTPUT_COMPILATION_FILE = args[++i];
+            }
+            else if(cmd == "--plex")
+            {
+                if(i + 1 >= argc) Ark::Output::ThrowFatalError("CompilerArguments", "The plex output file path not passed");
                 Ark::Global::Flags::PRINT_LEXER_OUTPUT = Ark::Global::Flags::OUTPUT_FLAG::FILE;
-                Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE = std::string(args[i + 1]);
-                i++;
+                Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE = args[++i];
+            }
+            else if(cmd == "--v" || cmd == "--version" || cmd == "-v")
+            {
+                PrintVersion();
+                exit(0);
+            }
+            else if(cmd == "--h" || cmd == "--help" || cmd == "-h")
+            {
+                PrintHelp();
+            }
+            else if(cmd == "--no-timer")
+            {
+                Ark::Global::Flags::PRINT_TIMER = false;
+            }
+            else 
+            {
+                if (cmd.length() > 0 && cmd[0] != '-') 
+                {
+                    if (Ark::Global::Flags::SOURCE_FILE.empty()) 
+                        Ark::Global::Flags::SOURCE_FILE = std::string(cmd);
+                    else 
+                        Ark::Output::ThrowFatalError("CompilerArguments", "Multiple source files detected or invalid argument: " + std::string(cmd));
+                }
+                else 
+                {
+                    Ark::Output::ThrowFatalError("CompilerArguments", "Unknown flag: " + std::string(cmd));
+                }
             }
         }
+    }
+
+    void PrintVersion()
+    {
+        Ark::Output::PrintInfo("ID: ", false);
+        Ark::Output::Print(Ark::Global::Flags::BUILD_ID);
+        Ark::Output::PrintInfo("Version: ", false);
+        Ark::Output::Print(Ark::Global::Flags::BUILD_VERSION);
+        Ark::Output::PrintInfo("Date: ", false);
+        Ark::Output::Print(Ark::Global::Flags::BUILD_DATE);
+        Ark::Output::PrintInfo("License: ", false);
+        Ark::Output::Print(Ark::Global::Flags::BUILD_LICENSE);
+    }
+
+    void PrintHelp()
+    {
+        PrintVersion();
+        Ark::Output::Print("\nUsage: arkc [file] [options]\n");
+        Ark::Output::Print("Options:");
+        Ark::Output::Print("  --f <path>      Specify source file");
+        Ark::Output::Print("  --o <path>      Specify output binary path");
+        Ark::Output::Print("  --plex <path>   Print lexer result into output file");
+        Ark::Output::Print("  --v, --version  Show version information");
+        Ark::Output::Print("  --h, --help     Show this help message");
+        Ark::Output::Print("  --no-timer      Disable compilation timer");
     }
 }
 

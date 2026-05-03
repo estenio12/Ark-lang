@@ -39,13 +39,13 @@ void Ark::ModuleResolver::ImportResolution(std::shared_ptr<Ark::ModuleResolution
             {
                 if (ancestor == caller->import_path) 
                 {
-                    Ark::Output::ThrowFatalError("Circular dependency chain: " + 
+                    Ark::Output::ThrowFatalError("ModuleManager", "Circular dependency chain: " + 
                         this->FormatStack(caller->dependency_stack) + " -> " + caller->import_path);
                 }
             }
 
             if(resolve_state->state == Ark::EModuleState::FAIL)
-                Ark::Output::ThrowFatalError("Required module cannot be read because it has fail load: " + resolve_state->import_path);
+                Ark::Output::ThrowFatalError("ModuleManager", "Required module cannot be read because it has fail load: " + resolve_state->import_path);
             
             if(resolve_state->state == Ark::EModuleState::PROCESSING ||
                 resolve_state->state == Ark::EModuleState::WAITING    )
@@ -64,14 +64,14 @@ std::shared_ptr<Ark::ModuleResolutionState> Ark::ModuleResolver::GetResolutionSt
 {
     auto it = this->module_history.find(path);
     if(it != this->module_history.end()) return it->second;
-    Ark::Output::ThrowFatalError("Resolution state not found: " + path);
+    Ark::Output::ThrowFatalError("ModuleManager", "Resolution state not found: " + path);
 }
 
 Ark::AST* Ark::ModuleResolver::GetASTByPath(const std::string& path) const
 {
     auto it = this->module_ast.find(path);
     if(it != this->module_ast.end()) return it->second.get();
-    Ark::Output::ThrowFatalError("AST not found in Module-Manager: " + path);
+    Ark::Output::ThrowFatalError("ModuleManager", "AST not found in Module-Manager: " + path);
 }
 
 std::string Ark::ModuleResolver::FormatStack(const std::vector<std::string>& stack)

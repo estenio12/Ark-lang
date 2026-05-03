@@ -23,12 +23,20 @@ namespace Ark::Global
     {
         enum class OUTPUT_FLAG : uint8_t { STDOUT, FILE, NONE };
 
+        inline std::string BUILD_ID = "Ark-lang Compiler (C)";
+        inline std::string BUILD_VERSION = "0.0.1";
+        inline std::string BUILD_DATE = __DATE__;
+        inline std::string BUILD_LICENSE = "Apache 2.0 - Copyright: Ark-lang Authors";
+
+        inline bool PRINT_TIMER = true;
+
+        inline std::string SOURCE_FILE = "";
         inline std::string OUTPUT_COMPILATION_FILE = "";
         
         inline OUTPUT_FLAG PRINT_LEXER_OUTPUT = OUTPUT_FLAG::NONE;
         inline std::string PRINT_LEXER_OUTPUT_FILE = "";
         
         inline OUTPUT_FLAG PRINT_PARSER_OUTPUT = OUTPUT_FLAG::NONE;
-        inline std::string PRINT_PARSER_OUTPUT_FILE = "";
+        inline std::string PRINT_PARSER_OUTPUT_FILE = "";               
     }
 }

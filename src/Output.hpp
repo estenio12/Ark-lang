@@ -45,34 +45,34 @@ namespace Ark::Output
         #endif
     }
 
-    inline void Print(std::string message, bool break_line = false, bool use_bold = false)
+    inline void Print(std::string message, bool break_line = true, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << message << RESET << (break_line ? "\n" : "");
     }
     
-    inline void PrintError(std::string message, bool break_line = false, bool use_bold = false)
+    inline void PrintError(std::string message, bool break_line = true, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << RED << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void PrintSuccess(std::string message, bool break_line = false, bool use_bold = false)
+    inline void PrintSuccess(std::string message, bool break_line = true, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << GREEN << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void PrintWarn(std::string message, bool break_line = false, bool use_bold = false)
+    inline void PrintWarn(std::string message, bool break_line = true, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << YELLOW << message << RESET << (break_line ? "\n" : "");
     }
 
-    inline void PrintInfo(std::string message, bool break_line = false, bool use_bold = false)
+    inline void PrintInfo(std::string message, bool break_line = true, bool use_bold = false)
     {
         std::cout << (use_bold ? BOLD : "") << BLUE << message << RESET << (break_line ? "\n" : "");
     }
 
-    [[noreturn]] inline void ThrowFatalError(std::string message)
+    [[noreturn]] inline void ThrowFatalError(std::string origin, std::string message)
     {
-        Output::PrintError(message, true, true);
+        Output::PrintError(origin + ": " + message, true, true);
         exit(1);
     }
 };

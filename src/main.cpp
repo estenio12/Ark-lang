@@ -23,23 +23,34 @@
 int main(int argc, char** argv)
 {
     auto timer_start = std::chrono::high_resolution_clock::now();
+    
     Ark::Output::Initialize();
     Ark::CompilerArguments::BuildArguments(argc, argv);
 
-    if(argc <= 1)
+    if(Ark::Global::Flags::SOURCE_FILE.empty())
     {
-        Ark::Output::ThrowFatalError("The path to the main file is expected as an argument.");
-        exit(1);
+        Ark::Output::PrintError("No source file provided. Use --h for help.");
+        return EXIT_FAILURE; 
     }
 
-    auto module_manager = std::make_shared<Ark::ModuleResolver>();
-    auto compile = std::make_unique<Ark::CoreCompile>(module_manager);
-    compile->Compile(std::string(argv[1]));
-
-    auto timer_end = std::chrono::high_resolution_clock::now();
-    auto elipsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(timer_end - timer_start);
-
-    Ark::Output::Print("\nCompilation completed in: " + std::to_string(elipsed_time.count()) + "ms\n");
+    try 
+    {
+        auto module_manager = std::make_shared<Ark::ModuleResolver>();
+        auto compile = std::make_unique<Ark::CoreCompile>(module_manager);
+        
+        compile->Compile(Ark::Global::Flags::SOURCE_FILE);
+        
+        auto timer_end = std::chrono::high_resolution_clock::now();
+        auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(timer_end - timer_start);
+        
+        if(Ark::Global::Flags::PRINT_TIMER)
+            Ark::Output::Print("\nCompilation completed in: " + std::to_string(elapsed_time.count()) + "ms\n");
+    }
+    catch (const std::exception& e) 
+    {
+        Ark::Output::ThrowFatalError("Core", std::string("Unexpected error: ") + e.what());
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }

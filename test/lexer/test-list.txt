@@ -1,0 +1,7 @@
+# first use path to ark file, by second use path to exp file.
+
+basepath=./lexer/
+types.ark=types.exp
+types.ark=types.exp
+types.ark=types.exp
+types.ark=types.exp

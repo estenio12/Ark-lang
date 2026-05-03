@@ -1,0 +1,50 @@
+aa26fd40e66c4bf5
+
+Content: var
+Type: KEYWORD
+Line: 1
+Col: 1
+------------------------
+
+
+Content: integer_8bits
+Type: IDENTIFIER
+Line: 1
+Col: 5
+------------------------
+
+
+Content: :
+Type: DELIMITER
+Line: 1
+Col: 18
+------------------------
+
+
+Content: i8
+Type: KEYWORD
+Line: 1
+Col: 20
+------------------------
+
+
+Content: =
+Type: OP_ASSIGNMENT
+Line: 1
+Col: 24
+------------------------
+
+
+Content: 10
+Type: LITERAL_INT
+Line: 1
+Col: 26
+------------------------
+
+
+Content: ;
+Type: DELIMITER
+Line: 1
+Col: 28
+------------------------
+

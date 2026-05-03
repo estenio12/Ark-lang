@@ -21,14 +21,14 @@
 std::shared_ptr<Ark::FileDescriptor> Ark::FileHandler::GetFileContent(const std::string& path)
 {
     if(path.empty())
-        Ark::Output::ThrowFatalError("Source code file path is required");
+        Ark::Output::ThrowFatalError("FileHandler", "Source code file path is required");
 
     auto absolute_path = Ark::FileHandler::PathResolver(path);
     
     std::ifstream in(absolute_path, std::ios::binary | std::ios::ate);
 
     if(!in.is_open())
-        Ark::Output::ThrowFatalError("File cannot be read: " + absolute_path);
+        Ark::Output::ThrowFatalError("FileHandler", "File cannot be read: " + absolute_path);
 
     std::streamsize size = in.tellg();
     
@@ -41,7 +41,7 @@ std::shared_ptr<Ark::FileDescriptor> Ark::FileHandler::GetFileContent(const std:
         in.seekg(0, std::ios::beg);
         file_descriptor->source_code.resize(size);
         if(!in.read(file_descriptor->source_code.data(), size))
-            Ark::Output::ThrowFatalError("Error reading content from: " + absolute_path);
+            Ark::Output::ThrowFatalError("FileHandler", "Error reading content from: " + absolute_path);
     }
 
     in.close();
@@ -52,11 +52,11 @@ std::string Ark::FileHandler::PathResolver(const std::string& path)
 {
     try 
     {
-        return std::filesystem::canonical(path).string();
+        return std::filesystem::absolute(path).string();
     } 
     catch (const std::filesystem::filesystem_error& e) 
     {
-        Ark::Output::ThrowFatalError("Could not resolve path: " + path);
+        Ark::Output::ThrowFatalError("FileHandler", "Could not resolve path: " + path);
     }
 }
 

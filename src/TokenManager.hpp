@@ -19,9 +19,11 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 #include "FileHandler.hpp"
 #include "Output.hpp"
 #include "GlobalFlags.hpp"
+#include "Tools.hpp"
 
 namespace Ark
 {
@@ -97,7 +99,9 @@ namespace Ark
 
                 if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::FILE)
                 {
-                    size_t hashValue = std::hash<std::string>{}(ss.str());
+                    std::filesystem::path outputPath = Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE;
+                    std::filesystem::create_directories(outputPath.parent_path());
+                    uint64_t hashValue = Ark::Tools::Hash::GenerateHash(ss.str());
                     std::ofstream file(Ark::Global::Flags::PRINT_LEXER_OUTPUT_FILE, std::ios::binary);
                     if(file.is_open())
                     {
