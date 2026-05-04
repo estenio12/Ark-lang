@@ -1,50 +1,57 @@
-aa26fd40e66c4bf5
+701a62fb1c322b1f
 
 Content: var
 Type: KEYWORD
-Line: 1
+Line: 22
 Col: 1
 ------------------------
 
 
-Content: integer_8bits
+Content: string_with_special_characters_1
 Type: IDENTIFIER
-Line: 1
+Line: 22
 Col: 5
 ------------------------
 
 
 Content: :
 Type: DELIMITER
-Line: 1
-Col: 18
+Line: 22
+Col: 37
 ------------------------
 
 
-Content: i8
+Content: string
 Type: KEYWORD
-Line: 1
-Col: 20
+Line: 22
+Col: 39
 ------------------------
 
 
 Content: =
 Type: OP_ASSIGNMENT
-Line: 1
-Col: 24
+Line: 22
+Col: 46
 ------------------------
 
 
-Content: 10
-Type: LITERAL_INT
-Line: 1
-Col: 26
+Content: ⱠⱡⱢ ⱣⱤ ⱥⱦ ⱧⱨⱩ Ꜧꜧ ꜨꜩꜪꜫ ꜬꜭꜮꜯ А Б В Г Д Е Ё Ж З И Ⴀ Ⴁ Ⴂ Ⴃ Ⴄ Ⴅ Ⴆ Ⴇ Ⴈ Ⴉ
+Type: LITERAL_STRING
+Line: 22
+Col: 116
 ------------------------
 
 
 Content: ;
 Type: DELIMITER
-Line: 1
-Col: 28
+Line: 22
+Col: 253
+------------------------
+
+
+Content: 
+Type: END_OF_FILE
+Line: 35
+Col: 0
 ------------------------
 

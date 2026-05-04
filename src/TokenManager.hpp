@@ -83,7 +83,18 @@ namespace Ark
                 return tokens.back();
             }
 
-            void printTokens()
+            void PushEndOfFile(int64_t line = 0, int64_t col = 0)
+            {
+                Ark::Token token;
+                token.col = col;
+                token.line = line;
+                token.content = "\0";
+                token.type = TokenType::END_OF_FILE;
+
+                this->tokens.push_back(token);
+            }
+
+            void PrintTokens()
             {
                 if(Ark::Global::Flags::PRINT_LEXER_OUTPUT == Ark::Global::Flags::OUTPUT_FLAG::NONE) return;
 

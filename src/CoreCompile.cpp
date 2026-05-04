@@ -27,7 +27,6 @@ void Ark::CoreCompile::Compile(const std::string& path)
 
     auto lexer = std::make_unique<Ark::Lexer>(file_descriptor);
     auto token_manager = lexer->Tokenize();
-    token_manager->printTokens();
 }
     
 void Ark::CoreCompile::OnModuleReady()

@@ -34,7 +34,7 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
         
         if(letter == TAB || letter == RETURN) continue;
 
-        if(letter == NEW_LINE)
+        if(letter == NEW_LINE || letter == FORM_FEED || letter == VERTICAL_TAB)
         {
             line++;
             col = 0;
@@ -58,49 +58,57 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             continue;
         }
 
+        // # Char identifier.
         if(letter == Ark::DELIMITER::QUOTE[0])
         {
             this->BuildToken(this->GetLexeme(buffer), line, col - 1);
 
-            std::string slice {letter};
+            std::string slice;
             bool is_escaped = false;
             while((i + 1) < source_size)
             {
                 i++; col++;
                 char current = source[i];
-                slice.push_back(current);
-
+                
                 if (current == Ark::DELIMITER::QUOTE[0] && !is_escaped) break;
+                
+                slice.push_back(current);
 
                 if (current == '\\')
                     is_escaped = !is_escaped;
                 else
                     is_escaped = false;
             }
-            this->BuildToken(this-> GetLexeme(slice), line, col);
+            auto lexime = this->GetLexeme(slice);
+            auto type = lexime.size() > 0 ? Ark::TokenType::LITERAL_CHAR : Ark::TokenType::UNKNOWN;
+            this->BuildToken(lexime, line, col, type);
             continue;
         }
 
+        // # String identifier.
         if(letter == Ark::DELIMITER::DOUBLEQUOTE[0])
         {
             this->BuildToken(this->GetLexeme(buffer), line, col -1 );
 
-            std::string slice {letter};
+            std::string slice;
             bool is_escaped = false;
             while((i + 1) < source_size)
             {
                 i++; col++;
                 char current = source[i];
-                slice.push_back(current);
 
+                if ((static_cast<unsigned char>(current) & 0xC0) != 0x80) col++;
+                
                 if (current == Ark::DELIMITER::DOUBLEQUOTE[0] && !is_escaped) break;
+                
+                slice.push_back(current);
 
                 if (current == '\\')
                     is_escaped = !is_escaped;
                 else
                     is_escaped = false;
             }
-            this->BuildToken(this-> GetLexeme(slice), line, col);
+            this->BuildToken(this->GetLexeme(slice), line, col, Ark::TokenType::LITERAL_STRING);
             continue;
         }
 
@@ -119,6 +127,13 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
                 i++;
             }
 
+            continue;
+        }
+
+        // # Build negative numbers.
+        if(letter == Ark::OP_ARITHMETIC::SUB[0] && (i + 1) < source_size && Ark::Tools::Number::IsDigit(source[i + 1]))
+        {
+            buffer.push_back(letter);
             continue;
         }
 
@@ -207,13 +222,14 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
     if(buffer.size() > 0)
         this->BuildToken(this->GetLexeme(buffer), line, col);
 
-    this->tokens->printTokens();
+    this->tokens->PushEndOfFile(line, col);
+    this->tokens->PrintTokens();
     return std::move(this->tokens);
 }
 
 void Ark::Lexer::BuildToken(std::string lexeme, uint64_t line, uint64_t col, Ark::TokenType type)
 {
-    if(lexeme.empty()) return;
+    if(lexeme.empty() && type != Ark::TokenType::LITERAL_STRING) return;
 
     Ark::Token token;
     token.col = col - lexeme.size();
@@ -240,23 +256,29 @@ Ark::TokenType Ark::Lexer::FindType(const std::string& target)
     if(Ark::Lexer::IsInteger(target)) return Ark::TokenType::LITERAL_INT;
     if(Ark::Lexer::IsFloat(target)) return Ark::TokenType::LITERAL_FLOAT;
     if(Ark::Lexer::IsBoolean(target)) return Ark::TokenType::LITERAL_BOOL;
-    if(Ark::Lexer::IsChar(target)) return Ark::TokenType::LITERAL_CHAR;
     if(Ark::Lexer::IsKeyword(target)) return Ark::TokenType::KEYWORD;
-    if(Ark::Lexer::IsString(target)) return Ark::TokenType::LITERAL_STRING;
     if(Ark::Lexer::IsIdentifier(target)) return Ark::TokenType::IDENTIFIER;
 
     return Ark::TokenType::UNKNOWN;
 }
 
-bool Ark::Lexer::IsDigit(const std::string& target, uint8_t max_dots)
+bool Ark::Lexer::IsNumber(const std::string& target, uint8_t max_dots)
 {
     if (target.empty()) return false;
 
     uint8_t dots_found = 0;
 
-    for(const auto& letter : target)
+    for(size_t i = 0; i < target.size(); i++)
     {
-        if(std::isdigit(static_cast<unsigned char>(letter)) == 0)
+        char letter = target[i];
+        
+        if(letter == Ark::OP_ARITHMETIC::SUB[0] && i == 0 && (i + 1) < target.size() && 
+           Ark::Tools::Number::IsDigit(target[i + 1]))
+        {
+            continue;
+        }
+
+        if(!Ark::Tools::Number::IsDigit(letter))
         {
             if(letter == '.')
             {
@@ -275,12 +297,12 @@ bool Ark::Lexer::IsDigit(const std::string& target, uint8_t max_dots)
 
 bool Ark::Lexer::IsInteger(const std::string& target)
 {
-    return Ark::Lexer::IsDigit(target, 0);
+    return Ark::Lexer::IsNumber(target, 0);
 }
 
 bool Ark::Lexer::IsFloat(const std::string& target)
 {
-    if(!Ark::Lexer::IsDigit(target, 1)) return false;
+    if(!Ark::Lexer::IsNumber(target, 1)) return false;
     if(target.front() == '.' || target.back() == '.') return false;
     return true;
 }
@@ -288,14 +310,6 @@ bool Ark::Lexer::IsFloat(const std::string& target)
 bool Ark::Lexer::IsBoolean(const std::string& target)
 {
     return target == Ark::KEYWORDS::TTRUE || target == Ark::KEYWORDS::TFALSE;
-}
-
-bool Ark::Lexer::IsChar(const std::string& target)
-{
-    if(target.size() < 3) return false;
-    if(target.front() != '\'' || target.back() != '\'') return false;
-
-    return true;
 }
 
 bool Ark::Lexer::IsKeyword(const std::string& target)
@@ -436,10 +450,3 @@ bool Ark::Lexer::IsIdentifier(const std::string& target)
     return true;
 }
 
-bool Ark::Lexer::IsString(const std::string& target)
-{
-    if(target.size() < 2) return false;
-    char quote = Ark::DELIMITER::DOUBLEQUOTE[0];
-    if(target.front() == quote && target.back() == quote) return true;
-    return false;
-}

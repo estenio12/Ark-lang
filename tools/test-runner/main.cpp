@@ -61,7 +61,7 @@ void RunTestFileTxt(const std::string& path)
     if(file.is_open())
     {
         std::string test_line;
-        uint8_t line_jump_counter = 1;
+        uint8_t line_jump_counter = 0;
         uint8_t line_counter = 0;
         while(std::getline(file, test_line))
         {
@@ -74,14 +74,14 @@ void RunTestFileTxt(const std::string& path)
             }
 
             // # Ignore blank lines and commented lines.
-            if(test_line.empty()) continue;
+            if(test_line.empty() || test_line.size() <= 1) continue;
             if(test_line.size() > 1 && test_line[0] == '#') continue;
 
             if(test_line.starts_with("basepath"))
             {
                 auto chunks = Ark::Tools::Str::Split(test_line, '=');
 
-                if(chunks.size() < 2) 
+                if(chunks.size() < 2)
                     Ark::Output::PrintError("Malformed line at: " + std::to_string(line_counter));
                 else
                     CURRENT_BASE_PATH = chunks[1];

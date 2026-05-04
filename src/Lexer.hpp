@@ -45,9 +45,11 @@ namespace Ark
             const char TAB = '\t';
             const char RETURN = '\r';
             const char NEW_LINE = '\n';
+            const char FORM_FEED = '\f';
+            const char VERTICAL_TAB = '\v';
 
         private:
-            bool IsDigit(const std::string& target, uint8_t max_dots);
+            bool IsNumber(const std::string& target, uint8_t max_dots);
             bool IsInteger(const std::string& target);
             bool IsFloat(const std::string& target);
             bool IsBoolean(const std::string& target);

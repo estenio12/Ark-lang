@@ -1,4 +1,4 @@
-var integer_8bits: i8  = 10;
+#var integer_8bits: i8  = 10;
 #var integer_16bits: i16 = 20;
 #var integer_32bits: i32 = 30;
 #var integer_64bits: i64 = 40;
@@ -19,7 +19,7 @@ var integer_8bits: i8  = 10;
 #var string_with_doublequote_priority: string = "'Hello Worlds!'";
 #var _string_empty: string = "";
 #var string_with_special_characters_0: string = "ççççááaáááéeééé´´iiíí´´oóóôêâãõ";
-#var string_with_special_characters_1: string = "ⱠⱡⱢ ⱣⱤ ⱥⱦ ⱧⱨⱩ Ꜧꜧ ꜨꜩꜪꜫ ꜬꜭꜮꜯ А Б В Г Д Е Ё Ж З И Ⴀ Ⴁ Ⴂ Ⴃ Ⴄ Ⴅ Ⴆ Ⴇ Ⴈ Ⴉ";
+var string_with_special_characters_1: string = "ⱠⱡⱢ ⱣⱤ ⱥⱦ ⱧⱨⱩ Ꜧꜧ ꜨꜩꜪꜫ ꜬꜭꜮꜯ А Б В Г Д Е Ё Ж З И Ⴀ Ⴁ Ⴂ Ⴃ Ⴄ Ⴅ Ⴆ Ⴇ Ⴈ Ⴉ";
 #var string_with_special_characters_2: string = "ا ب ت ث ج ح خ د ذ ر";
 #var string_with_special_characters_3: string = "𐤀 𐤁 𐤂 𐤃 𐤄 𐤅 𐤆 Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ ᐄ ᐅ ᐆ ᐇ ᐈ ᐉ ᐊ ᐋ ᐌ";
 #var string_with_special_characters_4: string = "Ⰰ Ⰱ Ⰲ Ⰳ Ⰴ Ⰵ Ⰶ Ⰷ Ⰸ";

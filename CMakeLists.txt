@@ -35,8 +35,9 @@ set_target_properties(arkc PROPERTIES
 )
 
 add_custom_command(TARGET arkc POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "$<TARGET_FILE:arkc>"
             "${CMAKE_CURRENT_SOURCE_DIR}/test/$<TARGET_FILE_NAME:arkc>"
-    COMMENT "Copiando binário para a pasta de testes..."
+    COMMENT "Sincronizando binário com a pasta de testes..."
+    VERBATIM
 )

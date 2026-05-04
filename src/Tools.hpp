@@ -80,4 +80,9 @@ namespace Ark::Tools
             return hash;
         }
     }
+
+    namespace Number
+    {
+        inline bool IsDigit(char c) { return c >= '0' && c <= '9'; }
+    }
 }
