@@ -20,8 +20,8 @@
 
 std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
 {
-    int64_t line = 1;
-    int64_t col  = 0;
+    uint64_t line = 1;
+    uint64_t col  = 0;
     std::string buffer;
     buffer.reserve(256);
 
@@ -88,13 +88,13 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
         // # String identifier.
         if(letter == Ark::DELIMITER::DOUBLEQUOTE[0])
         {
-            this->BuildToken(this->GetLexeme(buffer), line, col -1 );
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
 
             std::string slice;
             bool is_escaped = false;
             while((i + 1) < source_size)
             {
-                i++; col++;
+                i++;
                 char current = source[i];
 
                 if ((static_cast<unsigned char>(current) & 0xC0) != 0x80) col++;
@@ -232,7 +232,7 @@ void Ark::Lexer::BuildToken(std::string lexeme, uint64_t line, uint64_t col, Ark
     if(lexeme.empty() && type != Ark::TokenType::LITERAL_STRING) return;
 
     Ark::Token token;
-    token.col = col - lexeme.size();
+    token.col = col - this->GetUTF8Length(lexeme);
     token.line = line;
     token.content = lexeme;
 
@@ -242,6 +242,13 @@ void Ark::Lexer::BuildToken(std::string lexeme, uint64_t line, uint64_t col, Ark
         token.type = type;
 
     this->tokens->PushToken(token);
+}
+
+size_t Ark::Lexer::GetUTF8Length(const std::string& str) 
+{
+    size_t len = 0;
+    for (unsigned char c : str) { if ((c & 0xC0) != 0x80) len++; }
+    return len;
 }
 
 std::string Ark::Lexer::GetLexeme(std::string& buffer)

@@ -69,6 +69,7 @@ namespace Ark
             Ark::TokenType FindType(const std::string& target);
             std::string GetLexeme(std::string& buffer);
             void BuildToken(std::string lexeme, uint64_t line, uint64_t col, Ark::TokenType type = Ark::TokenType::UNKNOWN);
+            size_t GetUTF8Length(const std::string& str);
     };
 }
 

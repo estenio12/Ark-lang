@@ -20,12 +20,12 @@
 #include "Output.hpp"
 #include "Tools.hpp"
 
-std::filesystem::path OUTPUT_FILE_NAME = "tmp-build.test";
-std::filesystem::path CURRENT_BASE_PATH = "";
+std::string OUTPUT_FILE_NAME = "build.txt";
+std::string CURRENT_BASE_PATH = "";
 
-std::filesystem::path GetDirByPath(const std::string& path);
 void RunTestFileTxt(const std::string& path);
 bool RunTest(const std::string& ark_file, const std::string& exp_file);
+std::string GetFileSignature(const std::string& path);
 
 int main(int argc, char** argv)
 {
@@ -43,15 +43,6 @@ int main(int argc, char** argv)
 
     Ark::Output::Print("Test-Runner was completed.");
     return EXIT_SUCCESS;
-}
-
-std::filesystem::path GetDirByPath(const std::string& path)
-{
-    if(path.empty()) return path;
-
-    std::filesystem::path lpath(path);
-    std::filesystem::path dir = lpath.parent_path();
-    return dir;
 }
 
 void RunTestFileTxt(const std::string& path)
@@ -84,7 +75,7 @@ void RunTestFileTxt(const std::string& path)
                 if(chunks.size() < 2)
                     Ark::Output::PrintError("Malformed line at: " + std::to_string(line_counter));
                 else
-                    CURRENT_BASE_PATH = chunks[1];
+                    CURRENT_BASE_PATH = Ark::Tools::Str::Trim(chunks[1]);
 
                 continue;
             }
@@ -98,8 +89,10 @@ void RunTestFileTxt(const std::string& path)
                 Ark::Output::PrintError("Malformed line at: " + std::to_string(line_counter));
                 continue;
             }
-
-            auto result = RunTest(paths[0], paths[1]);
+            
+            auto ark_file_path = Ark::Tools::Str::Trim(paths[0]);
+            auto exp_file_path = Ark::Tools::Str::Trim(paths[1]);
+            auto result = RunTest(ark_file_path, exp_file_path);
 
             Ark::Output::Print("[ ", false);
             if(result)
@@ -131,9 +124,10 @@ bool RunTest(const std::string& ark_file, const std::string& exp_file)
         return false;
     }
 
-    auto OUTPUT_PATH = CURRENT_BASE_PATH / OUTPUT_FILE_NAME;
-    auto ark_file_path = CURRENT_BASE_PATH / ark_file;
-    auto exp_file_path = CURRENT_BASE_PATH / exp_file; // Garantir que o basepath se aplica ao .exp
+    std::filesystem::path base(CURRENT_BASE_PATH);
+    std::string output_path   = (base / OUTPUT_FILE_NAME).string();
+    std::string ark_file_path = (base / ark_file).string();
+    std::string exp_file_path = (base / exp_file).string();
     
     #if _WIN32
         std::string cmd = "arkc.exe ";
@@ -141,7 +135,7 @@ bool RunTest(const std::string& ark_file, const std::string& exp_file)
         std::string cmd = "./arkc ";
     #endif
     
-    cmd += "--no-timer --f " + ark_file_path.string() + " --plex " + OUTPUT_PATH.string();
+    cmd += "--no-timer --f " + ark_file_path + " --plex " + output_path;
 
     int result = std::system(cmd.c_str());
 
@@ -155,19 +149,8 @@ bool RunTest(const std::string& ark_file, const std::string& exp_file)
         return false;
     }
 
-    auto read_first_line = [](const std::filesystem::path& p) -> std::string {
-        std::ifstream file(p, std::ios::binary);
-        std::string line;
-        if(file.is_open()) {
-            std::getline(file, line);
-            file.close();
-        }
-        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
-        return line;
-    };
-
-    std::string target_hash = read_first_line(OUTPUT_PATH);
-    std::string exp_hash    = read_first_line(exp_file_path);
+    std::string target_hash = GetFileSignature(output_path);
+    std::string exp_hash    = GetFileSignature(exp_file_path);
 
     if(target_hash.empty() || exp_hash.empty())
     {
@@ -176,5 +159,16 @@ bool RunTest(const std::string& ark_file, const std::string& exp_file)
 
     return target_hash == exp_hash;
 }
+
+std::string GetFileSignature(const std::string& path)
+{
+    std::string hash;
+    std::ifstream file(path, std::ios::binary);
+    if(file.is_open()) { std::getline(file, hash); }
+    file.close();
+    return Ark::Tools::Str::Trim(hash);
+}
+
+
 
 
