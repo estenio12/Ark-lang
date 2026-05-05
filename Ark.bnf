@@ -21,9 +21,10 @@
 
 <call-function> = <identifier> [ <generic-args> ] "(" [ <argument-list> ] ")"
 
-<op-arithmetic> = "+" | "-" | "*" | "/" | "+=" | "-=" | "*=" | "/="
+<op-arithmetic> = "+" | "-" | "*" | "/"
 <op-logical>    = "||" | "&&"
 <op-comparison> = "==" | "!=" | ">" | "<" | ">=" | "<="
+<op-assignment> = "+=" | "-=" | "*=" | "/="
 <op-bitwise>    = "|" | "&" | "^" | "<<" | ">>" | "!"
 
 <argument-list> = <expression> ("," <expression>)*

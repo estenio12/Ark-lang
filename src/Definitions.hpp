@@ -101,6 +101,7 @@ namespace Ark
         const std::string_view SUB = "-";
         const std::string_view MUL = "*";
         const std::string_view DIV = "/";
+        const std::string_view MOD = "%";
     }
 
     namespace OP_LOGICAL
@@ -127,6 +128,7 @@ namespace Ark
         const std::string SUBASSIGN  = "-=";
         const std::string MULTASSIGN = "*=";
         const std::string DIVASSIGN  = "/=";
+        const std::string MODASSIGN  = "%=";
     }
 
     namespace OP_BITWISE

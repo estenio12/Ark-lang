@@ -1,3 +1,4 @@
+var no_default_value: i8;
 var integer_8bits: i8  = 10;
 var integer_16bits: i16 = 20;
 var integer_32bits: i32 = 30;
