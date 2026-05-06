@@ -21,11 +21,13 @@
 
 <call-function> = <identifier> [ <generic-args> ] "(" [ <argument-list> ] ")"
 
-<op-arithmetic> = "+" | "-" | "*" | "/"
-<op-logical>    = "||" | "&&"
-<op-comparison> = "==" | "!=" | ">" | "<" | ">=" | "<="
-<op-assignment> = "+=" | "-=" | "*=" | "/="
-<op-bitwise>    = "|" | "&" | "^" | "<<" | ">>" | "!"
+<op-arithmetic> = <expression> "+" | "-" | "*" | "/" <expression>
+<op-logical>    = <expression> "||" | "&&" | "!" <expression>
+<op-comparison> = <expression> "==" | "!=" | ">" | "<" | ">=" | "<=" <expression>
+<op-bitwise>    = <expression> "|" | "&" | "^" | "<<" | ">>" | "~" <expression>
+<op-assignment> = "+=" | "-=" | "*=" | "/=" ;
+
+<assignment-stmt> = <identifier> <op-assignment> <expression> ';'
 
 <argument-list> = <expression> ("," <expression>)*
 
@@ -33,7 +35,7 @@
                     ( 'elif' '(' <expression> ')' <block> )* [ 'else' <block> ] 
                     'end'
 
-<interator> = 'in' | 'of'
+<interator> = 'in' | 'of' | 'at'
 
 <enum-item>        = <identifier> [ "=" <literal-int> ]
 <enum-item-list>   = <enum-item> ( "," <enum-item> )*
@@ -50,11 +52,11 @@
 
 <return-stmt> = 'return' ( <expression> ) ';'
 
-<statement> = <data-declaration> | <call-function> ";" | <condition-stmt> | <loop-declaration> | <return-stmt> | <enum-declaration>
+<statement> = <data-declaration> | <assignment-stmt> | <call-function> ";" | <condition-stmt> | <loop-declaration> | <return-stmt> | <enum-declaration>
 
 <block-scope> = ':' <statement>* 'end'
 
-<expression> = <literal-value> | <call-function> | <identifier> | <anonimous-function> | '(' <expression> ')'
+<expression> = '(' <expression> ')' | <literal-value> | <call-function> | <anonimous-function> | <identifier> | <op-arithmetic> | <op-comparison> | <op-logical> | <op-bitwise>
 
 <variable-declaration> = 'var' <identifier> ':' <type-identifier>
 <constant-declaration> = 'const' <identifier> ':' <type-identifier>

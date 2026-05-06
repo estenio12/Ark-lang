@@ -1,1 +1,5 @@
-var teste: int = 10;
+var test: i8 = 10;
+test -= 5;
+test += 20;
+test *= 10;
+test /= 5;

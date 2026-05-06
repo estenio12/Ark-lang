@@ -51,6 +51,7 @@ namespace Ark
         const std::string TENUM      = "enum";
         const std::string TIN        = "in";
         const std::string TOF        = "of";
+        const std::string TAT        = "at";
         const std::string TEXTERN    = "extern";
         const std::string TTRUE      = "true";
         const std::string TFALSE     = "false";
@@ -88,6 +89,7 @@ namespace Ark
             Ark::KEYWORDS::TENUM,
             Ark::KEYWORDS::TIN,
             Ark::KEYWORDS::TOF,
+            Ark::KEYWORDS::TAT,
             Ark::KEYWORDS::TEXTERN,
             Ark::KEYWORDS::TTRUE,
             Ark::KEYWORDS::TFALSE,
@@ -153,8 +155,8 @@ namespace Ark
         const std::string RBRACKET  = "]";
         const std::string SEMICOLON = ";";
         const std::string ARROW     = "->";
+        const std::string QUOTE     = "'";
         const std::string SCOPEACCESS = "::";
-        const std::string QUOTE  = "'";
         const std::string DOUBLEQUOTE = "\"";
     }
 

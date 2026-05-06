@@ -2,3 +2,4 @@
 
 basepath=./lexer/
 types.ark=types.exp
+assignment.ark=assignment.exp
