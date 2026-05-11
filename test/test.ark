@@ -1,3 +1,4 @@
 # teste de comentário
-var integer_64bits_negative: i64 = -455;
+var teste: i64 = 15;
+teste += 10;
 

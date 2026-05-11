@@ -56,7 +56,7 @@ namespace Ark
             bool IsChar(const std::string& target);
             bool IsString(const std::string& target);
             bool IsKeyword(const std::string& target);
-            bool IsOpArithmetic(const char& target);
+            bool IsOpArithmetic(const size_t& index);
             uint8_t IsDelimiter(const size_t& index);
             uint8_t IsOpLogic(const size_t& index);
             uint8_t IsOpComparison(const size_t& index);

@@ -20,7 +20,7 @@
 #include "Output.hpp"
 #include "Tools.hpp"
 
-std::string OUTPUT_FILE_NAME = "build.txt";
+std::string OUTPUT_FILE_NAME = "@build.txt";
 std::string CURRENT_BASE_PATH = "";
 
 void RunTestFileTxt(const std::string& path);

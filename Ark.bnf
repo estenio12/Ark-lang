@@ -56,7 +56,9 @@
 
 <block-scope> = ':' <statement>* 'end'
 
-<expression> = '(' <expression> ')' | <literal-value> | <call-function> | <anonimous-function> | <identifier> | <op-arithmetic> | <op-comparison> | <op-logical> | <op-bitwise>
+<member-access> = <identifier> "::" <identifier>
+
+<expression> = '(' <expression> ')' | <literal-value> | <member-access> | <call-function> | <anonimous-function> | <identifier> | <op-arithmetic> | <op-comparison> | <op-logical> | <op-bitwise>
 
 <variable-declaration> = 'var' <identifier> ':' <type-identifier>
 <constant-declaration> = 'const' <identifier> ':' <type-identifier>

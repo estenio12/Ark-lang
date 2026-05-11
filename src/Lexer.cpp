@@ -30,12 +30,13 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
     {
         char letter = source[i];
         
-        if ((static_cast<unsigned char>(letter) & 0xC0) != 0x80) col++;
+        if((static_cast<unsigned char>(letter) & 0xC0) != 0x80) col++;
         
         if(letter == TAB || letter == RETURN) continue;
 
         if(letter == NEW_LINE || letter == FORM_FEED || letter == VERTICAL_TAB)
         {
+            this->BuildToken(this->GetLexeme(buffer), line, col - 1);
             line++;
             col = 0;
             continue;
@@ -137,7 +138,7 @@ std::unique_ptr<Ark::TokenManager> Ark::Lexer::Tokenize()
             continue;
         }
 
-        if(IsOpArithmetic(letter))
+        if(IsOpArithmetic(i))
         {
             this->BuildToken(this->GetLexeme(buffer), line, col - 1);
             this->BuildToken(std::string{letter}, line, col, Ark::TokenType::OP_ARITHMETIC);
@@ -324,12 +325,26 @@ bool Ark::Lexer::IsKeyword(const std::string& target)
     return Ark::KEYWORDS::keywords.find(target) != Ark::KEYWORDS::keywords.end();
 }
 
-bool Ark::Lexer::IsOpArithmetic(const char& target)
+bool Ark::Lexer::IsOpArithmetic(const size_t& index)
 {
-    if(target == Ark::OP_ARITHMETIC::ADD[0] ||
-       target == Ark::OP_ARITHMETIC::SUB[0] ||
-       target == Ark::OP_ARITHMETIC::MUL[0] ||
-       target == Ark::OP_ARITHMETIC::DIV[0] )
+    char letter = source[index];
+    char next = (index + 1 < this->source.size()) ? source[index + 1] : '\0';
+
+    if(next != '\0')
+    {
+        if((letter == Ark::OP_ARITHMETIC::ADD[0] && next == Ark::OP_ASSIGNMENT::ASSIGN[0]) || 
+           (letter == Ark::OP_ARITHMETIC::SUB[0] && next == Ark::OP_ASSIGNMENT::ASSIGN[0]) ||
+           (letter == Ark::OP_ARITHMETIC::MUL[0] && next == Ark::OP_ASSIGNMENT::ASSIGN[0]) ||
+           (letter == Ark::OP_ARITHMETIC::DIV[0] && next == Ark::OP_ASSIGNMENT::ASSIGN[0]) )
+        {
+            return false;
+        }
+    }
+    
+    if(letter == Ark::OP_ARITHMETIC::ADD[0] ||
+       letter == Ark::OP_ARITHMETIC::SUB[0] ||
+       letter == Ark::OP_ARITHMETIC::MUL[0] ||
+       letter == Ark::OP_ARITHMETIC::DIV[0] )
     {
         return true;
     }
