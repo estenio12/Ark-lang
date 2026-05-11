@@ -1,4 +1,4 @@
-e89d8fbf00393777
+7b4320a3b78f3258
 
 Content: module
 Type: KEYWORD
@@ -63,7 +63,7 @@ Col: 1
 ------------------------
 
 
-Content: EmployeeTypes
+Content: EmployeePosition
 Type: IDENTIFIER
 Line: 4
 Col: 6
@@ -73,7 +73,7 @@ Col: 6
 Content: :
 Type: DELIMITER
 Line: 4
-Col: 19
+Col: 22
 ------------------------
 
 
@@ -315,7 +315,7 @@ Col: 5
 ------------------------
 
 
-Content: type
+Content: position
 Type: IDENTIFIER
 Line: 19
 Col: 9
@@ -325,49 +325,49 @@ Col: 9
 Content: :
 Type: DELIMITER
 Line: 19
-Col: 13
+Col: 17
 ------------------------
 
 
-Content: EmployeeTypes
+Content: EmployeePosition
 Type: IDENTIFIER
 Line: 19
-Col: 15
+Col: 19
 ------------------------
 
 
 Content: =
 Type: OP_ASSIGNMENT
 Line: 19
-Col: 29
+Col: 36
 ------------------------
 
 
-Content: EmployeeTypes
+Content: EmployeePosition
 Type: IDENTIFIER
 Line: 19
-Col: 31
+Col: 38
 ------------------------
 
 
 Content: ::
 Type: DELIMITER
 Line: 19
-Col: 43
+Col: 53
 ------------------------
 
 
 Content: DEVELOPER
 Type: IDENTIFIER
 Line: 19
-Col: 45
+Col: 55
 ------------------------
 
 
 Content: ;
 Type: DELIMITER
 Line: 19
-Col: 54
+Col: 64
 ------------------------
 
 
@@ -742,7 +742,7 @@ Col: 18
 ------------------------
 
 
-Content: Data
+Content: Date
 Type: IDENTIFIER
 Line: 32
 Col: 20
@@ -798,7 +798,7 @@ Col: 20
 ------------------------
 
 
-Content: Data
+Content: Date
 Type: IDENTIFIER
 Line: 33
 Col: 22

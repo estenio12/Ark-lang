@@ -22,6 +22,7 @@ set(SOURCES
     src/Lexer.cpp
     src/main.cpp
     src/ModuleManager.cpp
+    src/Parser.cpp
 )
 
 add_executable(arkc ${SOURCES})

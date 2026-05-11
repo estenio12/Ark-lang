@@ -68,8 +68,8 @@ namespace Ark
         private:
             // # Path, resolution-state reference.
             std::map<std::string, std::shared_ptr<ModuleResolutionState>> module_history;
-            // # Stored AST processed by ImportResolution.
-            std::map<std::string, std::unique_ptr<AST>> module_ast;
+            // # Stored AstBranch processed by ImportResolution.
+            std::map<std::string, std::unique_ptr<Ark::Ast::AstBranch>> module_ast;
 
         public:
             ModuleResolver() = default;
@@ -77,7 +77,7 @@ namespace Ark
         public:
             void ImportResolution(std::shared_ptr<ModuleResolutionCaller> caller);
             std::shared_ptr<ModuleResolutionState> GetResolutionState(const std::string& path);
-            Ark::AST* GetASTByPath(const std::string& path) const;
+            Ark::Ast::AstBranch* GetASTByPath(const std::string& path) const;
 
         private:
             std::string FormatStack(const std::vector<std::string>& stack);

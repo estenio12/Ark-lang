@@ -67,11 +67,11 @@ std::shared_ptr<Ark::ModuleResolutionState> Ark::ModuleResolver::GetResolutionSt
     Ark::Output::ThrowFatalError("ModuleManager", "Resolution state not found: " + path);
 }
 
-Ark::AST* Ark::ModuleResolver::GetASTByPath(const std::string& path) const
+Ark::Ast::AstBranch* Ark::ModuleResolver::GetASTByPath(const std::string& path) const
 {
     auto it = this->module_ast.find(path);
     if(it != this->module_ast.end()) return it->second.get();
-    Ark::Output::ThrowFatalError("ModuleManager", "AST not found in Module-Manager: " + path);
+    Ark::Output::ThrowFatalError("ModuleManager", "AstBranch not found in Module-Manager: " + path);
 }
 
 std::string Ark::ModuleResolver::FormatStack(const std::vector<std::string>& stack)
