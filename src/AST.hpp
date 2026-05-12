@@ -16,6 +16,9 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <unordered_map>
+#include "Definitions.hpp"
+#include "TokenManager.hpp"
 
 namespace Ark::Ast
 {
@@ -69,18 +72,21 @@ namespace Ark::Ast
     class LiteralFloat;
     class LiteralInt;
     class BinOp;
+    class UnaryOp;
+    class AssignmentStmt;
+    class LoopBlockScope;
 
     enum class TYPE : uint8_t
     {
         LITERAL_INT, LITERAL_FLOAT, LITERAL_BOOL, LITERAL_CHAR, LITERAL_STRING, LITERAL_VALUE,
-        TYPE_NATIVE, IDENTIFIER, TYPE_ARRAY, TYPE_LIST, CALL_FUNCTION,
-        OP_ARITHMETIC, OP_LOGICAL, OP_COMPARISON, OP_BITWISE, ARGUMENT_LIST, CONDITION_STMT, INTERATOR,
+        TYPE_NATIVE, IDENTIFIER, TYPE_ARRAY, TYPE_LIST, CALL_FUNCTION, ARGUMENT_LIST, CONDITION_STMT, INTERATOR,
         ENUM_ITEM, ENUM_ITEM_LIST, ENUM_BLOCK_SCOPE, ENUM_DECLARATION, FOR_STMT, WHILE_STMT,
         LOOP_DECLARATION, RETURN_STMT, STATEMENT, BLOCK_SCOPE, EXPRESSION, VARIABLE_DECLARATION,
         CONSTANT_DECLARATION, ACCESS_MODIFIER, DATA_DECLARATION, GENERIC_PARAM, GENERIC_ARGS, STRUCT_VALUE_ASSIGNMENT,
         STRUCT_VALUE_ASSIGN_LIST, STRUCT_INSTANCE, STRUCT_BLOCK_SCOPE, STRUCT_INHERIT, STRUCT_DECLARATION, PARAMETER,
         PARAMETER_LIST, TYPE_IDENTIFER, TYPE_FUNCTION, FUNCTION_DECLARATION, ANONIMOUS_FUNCTION,
-        EXTERN_DECLARATION, MODULE_DECLARATION, IMPORT_DECLARATION, BinOp, UNKNOW
+        EXTERN_DECLARATION, MODULE_DECLARATION, IMPORT_DECLARATION, BIN_OP, UNARY_OP, UNKNOW,
+        ASSIGNMENT_STMT, OP_ASSIGNMENT, LOOP_BLOCK_SCOPE
     };
 
     class AstNode
@@ -90,6 +96,11 @@ namespace Ark::Ast
             TYPE type = TYPE::UNKNOW;
             uint64_t line = 0;
             uint64_t col = 0;
+
+            virtual std::string Dump(int ident) = 0;
+
+        private:
+            int ident_factor = 4;
     };
 
     class AstBranch
@@ -168,9 +179,9 @@ namespace Ark::Ast
         public:
             VariableDeclaration() { type = TYPE::VARIABLE_DECLARATION; }
 
-            std::string var_name;
-            std::unique_ptr<TypeIdentifier> var_type;
-            std::unique_ptr<AstNode> value;
+            std::string identifier;
+            std::unique_ptr<TypeIdentifier> type_def;
+            std::unique_ptr<Expression> value;
     };
 
     class ConstantDeclaration : public AstNode
@@ -178,9 +189,9 @@ namespace Ark::Ast
         public:
             ConstantDeclaration() { type = TYPE::CONSTANT_DECLARATION; }
 
-            std::string const_name;
-            std::unique_ptr<TypeIdentifier> const_type;
-            std::unique_ptr<AstNode> value; 
+            std::string identifier;
+            std::unique_ptr<TypeIdentifier> type_def;
+            std::unique_ptr<Expression> value;
     };
 
     class FunctionDeclaration : public AstNode 
@@ -188,10 +199,11 @@ namespace Ark::Ast
         public:
             FunctionDeclaration() { type = TYPE::FUNCTION_DECLARATION; }
 
-            std::string function_name;
+            std::string identifier;
             std::unique_ptr<ParameterList> parameters;
-            std::unique_ptr<AstNode> return_type;
+            std::unique_ptr<TypeIdentifier> type_def;
             std::unique_ptr<BlockScope> body;
+            bool is_internal = false;
     };
 
     class TypeList : public AstNode
@@ -214,23 +226,155 @@ namespace Ark::Ast
 
     class BinOp : public AstNode
     {
-        enum class PRIORITY : uint8_t
-        {
-            LOW = 1,
-            MEDIUM = 2,
-            HIGH = 3,
-            EXTRA_HIGH = 4,
-            MAX = 5
-        };
-
         public:
-            BinOp() { type = TYPE::BinOp; }
+            BinOp() { type = TYPE::BIN_OP; }
 
-            Token op;
-            PRIORITY priority = PRIORITY::LOW;
+            Ark::Token oper;
+            uint8_t priority = 0;
 
             std::unique_ptr<AstNode> left;
             std::unique_ptr<AstNode> right;
+    };
+
+    class GenericArgs : public AstNode
+    {
+        public: 
+            GenericArgs() { type = TYPE::GENERIC_ARGS; }
+
+            std::vector<std::unique_ptr<TypeIdentifier>> arg_list;
+    };
+
+    class GenericParam : public AstNode
+    {
+        public: 
+            GenericParam() { type = TYPE::GENERIC_PARAM; }
+
+            std::vector<std::unique_ptr<Identifier>> param_list;
+    };
+
+    class UnaryOp : public AstNode
+    {
+        public: 
+            UnaryOp() { type = TYPE::UNARY_OP; }
+
+            std::string value;
+    };
+
+    class OpAssignment : public AstNode
+    {
+        public: 
+            OpAssignment() { type = TYPE::OP_ASSIGNMENT; }
+
+            std::string value;
+    };
+
+    class AssignmentStmt : public AstNode
+    {
+        public: 
+            AssignmentStmt() { type = TYPE::ASSIGNMENT_STMT; }
+
+            std::unique_ptr<Identifier> identifier;
+            std::unique_ptr<OpAssignment> oper;
+            std::unique_ptr<Expression> expression;
+    };
+
+    class ArgumentList : public AstNode
+    {
+        public: 
+            ArgumentList() { type = TYPE::ARGUMENT_LIST; }
+
+            std::vector<std::unique_ptr<Expression>> expressions;
+    };
+
+    struct IfBranch 
+    {
+        std::unique_ptr<Expression> condition;
+        std::unique_ptr<BlockScope> body;
+    };
+    class ConditionStmt : public AstNode
+    {
+        public: 
+            ConditionStmt() { type = TYPE::CONDITION_STMT; }
+
+            std::unique_ptr<IfBranch> main_branch;
+            std::vector<std::unique_ptr<IfBranch>> elif_branch;
+            std::unique_ptr<BlockScope> else_body;
+    };
+
+    class Interator : public AstNode
+    {
+        public: 
+            Interator() { type = TYPE::INTERATOR; }
+
+            std::string value;
+    };
+
+    class EnumItem : public AstNode
+    {
+        public: 
+            EnumItem() { type = TYPE::ENUM_ITEM; }
+
+            std::vector<std::pair<std::string, std::unique_ptr<LiteralInt>>> items;
+    };
+
+    class EnumItemList : public AstNode
+    {
+        public: 
+            EnumItemList() { type = TYPE::ENUM_ITEM_LIST; }
+
+            std::vector<std::unique_ptr<EnumItem>> items_list;
+    };
+
+    class EnumBlockScope : public AstNode
+    {
+        public: 
+            EnumBlockScope() { type = TYPE::ENUM_BLOCK_SCOPE; }
+
+            std::unique_ptr<EnumItemList> body;
+    };
+
+    class EnumDeclaration : public AstNode
+    {
+        public: 
+            EnumDeclaration() { type = TYPE::ENUM_DECLARATION; }
+
+            std::unique_ptr<EnumItemList> body;
+            bool is_internal = false;
+    };
+
+    class ForStmt : public AstNode
+    {
+        public: 
+            ForStmt() { type = TYPE::FOR_STMT; }
+
+            std::unique_ptr<ConstantDeclaration> value;
+            std::unique_ptr<Interator> iterator;
+            std::unique_ptr<TypeIdentifier> target;
+    };
+
+    class WhileStmt : public AstNode
+    {
+        public: 
+            WhileStmt() { type = TYPE::WHILE_STMT; }
+
+            std::unique_ptr<Expression> expression;
+    };
+    
+    class LoopBlockScope: public AstNode
+    {
+        public:
+            LoopBlockScope() { type = TYPE::LOOP_BLOCK_SCOPE; }
+
+            std::unique_ptr<AstNode> statement;
+    };
+    
+    class LoopDeclaration: public AstNode
+    {
+        public:
+            LoopDeclaration() { type = TYPE::LOOP_DECLARATION; }
+
+            std::unique_ptr<AstNode> loop_decl_stmt;
+            std::unique_ptr<LoopBlockScope> body; 
     };
 }
 

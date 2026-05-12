@@ -15,6 +15,7 @@
  */
 #pragma once
 #include <string_view>
+#include <unordered_set>
 
 namespace Ark
 {
@@ -56,6 +57,8 @@ namespace Ark
         const std::string TTRUE      = "true";
         const std::string TFALSE     = "false";
         const std::string TSTRUCT    = "struct";
+        const std::string TCONTINUE  = "continue";
+        const std::string TMATCH     = "match";
 
         inline const std::unordered_set<std::string> keywords = {
             Ark::KEYWORDS::TI8,
@@ -94,6 +97,8 @@ namespace Ark
             Ark::KEYWORDS::TTRUE,
             Ark::KEYWORDS::TFALSE,
             Ark::KEYWORDS::TSTRUCT,
+            Ark::KEYWORDS::TCONTINUE,
+            Ark::KEYWORDS::TMATCH,
         };
     }
 

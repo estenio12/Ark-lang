@@ -25,7 +25,7 @@
 
 <bin-op> = <expression> "+" | "-" | "*" | "/" | "||" | "&&" | "!" | "==" | "!=" | ">" | "<" | ">=" | "<=" | "|" | "&" | "^" | "<<" | ">>" | "~" <expression>
 
-<op-assignment> = "+=" | "-=" | "*=" | "/=" 
+<op-assignment> = "=" | "+=" | "-=" | "*=" | "/=" 
 
 <assignment-stmt> = <identifier> <op-assignment> <expression> ';'
 
@@ -44,11 +44,13 @@
 
 <enum-declaration> = [ <access-modifier> ] "enum" <identifier> <enum-block-scope>
 
-<for-stmt> = 'for' '(' <constant-declaration> <interator> <type-identifier>* ')' <block-scope> 
+<loop-block-scope> = ':' (<statement> | 'break' ';' | 'continue' ';')* 'end'
 
-<while-stmt> = 'while' '(' <expression> ')' <block-scope>
+<for-stmt> = 'for' '(' <constant-declaration> <interator> <type-identifier>* ')' 
 
-<loop-declaration> = <for-stmt> | <while-stmt>
+<while-stmt> = 'while' '(' <expression> ')'
+
+<loop-declaration> = (<for-stmt> | <while-stmt>) <loop-block-scope>
 
 <return-stmt> = 'return' ( <expression> ) ';'
 
