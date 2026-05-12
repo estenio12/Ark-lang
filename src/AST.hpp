@@ -57,10 +57,6 @@ namespace Ark::Ast
     class Interator;
     class ConditionStmt;
     class ArgumentList;
-    class OpBitwise;
-    class OpComparison;
-    class OpLogical;
-    class OpArithmetic;
     class CallFunction;
     class TypedList;
     class TypedArray;
@@ -72,6 +68,7 @@ namespace Ark::Ast
     class LiteralBool;
     class LiteralFloat;
     class LiteralInt;
+    class BinOp;
 
     enum class TYPE : uint8_t
     {
@@ -197,6 +194,43 @@ namespace Ark::Ast
             std::unique_ptr<BlockScope> body;
     };
 
-    
+    class TypeList : public AstNode
+    {
+        public:
+            TypeList() { type = TYPE::TYPE_LIST; }
+
+            std::vector<std::unique_ptr<TypeIdentifier>> type_list;
+    };
+
+    class CallFunction : public AstNode
+    {
+        public:
+            CallFunction() { type = TYPE::CALL_FUNCTION; }
+
+            std::unique_ptr<Identifier> identifier;
+            std::unique_ptr<GenericArgs> generic_args;
+            std::unique_ptr<ArgumentList> args;
+    };
+
+    class BinOp : public AstNode
+    {
+        enum class PRIORITY : uint8_t
+        {
+            LOW = 1,
+            MEDIUM = 2,
+            HIGH = 3,
+            EXTRA_HIGH = 4,
+            MAX = 5
+        };
+
+        public:
+            BinOp() { type = TYPE::BinOp; }
+
+            Token op;
+            PRIORITY priority = PRIORITY::LOW;
+
+            std::unique_ptr<AstNode> left;
+            std::unique_ptr<AstNode> right;
+    };
 }
 

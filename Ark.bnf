@@ -21,11 +21,11 @@
 
 <call-function> = <identifier> [ <generic-args> ] "(" [ <argument-list> ] ")"
 
-<op-arithmetic> = <expression> "+" | "-" | "*" | "/" <expression>
-<op-logical>    = <expression> "||" | "&&" | "!" <expression>
-<op-comparison> = <expression> "==" | "!=" | ">" | "<" | ">=" | "<=" <expression>
-<op-bitwise>    = <expression> "|" | "&" | "^" | "<<" | ">>" | "~" <expression>
-<op-assignment> = "+=" | "-=" | "*=" | "/=" ;
+<unary-op> = "!" | "~"
+
+<bin-op> = <expression> "+" | "-" | "*" | "/" | "||" | "&&" | "!" | "==" | "!=" | ">" | "<" | ">=" | "<=" | "|" | "&" | "^" | "<<" | ">>" | "~" <expression>
+
+<op-assignment> = "+=" | "-=" | "*=" | "/=" 
 
 <assignment-stmt> = <identifier> <op-assignment> <expression> ';'
 
