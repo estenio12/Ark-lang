@@ -23,6 +23,8 @@
 
 <unary-op> = "!" | "~"
 
+<cast> = 'as' <type-identifier>
+
 <bin-op> = <expression> "+" | "-" | "*" | "/" | "||" | "&&" | "!" | "==" | "!=" | ">" | "<" | ">=" | "<=" | "|" | "&" | "^" | "<<" | ">>" | "~" <expression>
 
 <op-assignment> = "=" | "+=" | "-=" | "*=" | "/=" 
@@ -58,9 +60,7 @@
 
 <block-scope> = ':' <statement>* 'end'
 
-<member-access> = <identifier> "::" <identifier>
-
-<expression> = '(' <expression> ')' | <literal-value> | <member-access> | <call-function> | <anonimous-function> | <identifier> | <op-arithmetic> | <op-comparison> | <op-logical> | <op-bitwise>
+<expression> = ('(' <expression> ')' | <literal-value> | <call-function> | <identifier> ) [ <cast> ] | <anonimous-function> | <bin-op>
 
 <variable-declaration> = 'var' <identifier> ':' <type-identifier>
 <constant-declaration> = 'const' <identifier> ':' <type-identifier>

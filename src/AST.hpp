@@ -75,25 +75,13 @@ namespace Ark::Ast
     class UnaryOp;
     class AssignmentStmt;
     class LoopBlockScope;
-
-    enum class TYPE : uint8_t
-    {
-        LITERAL_INT, LITERAL_FLOAT, LITERAL_BOOL, LITERAL_CHAR, LITERAL_STRING, LITERAL_VALUE,
-        TYPE_NATIVE, IDENTIFIER, TYPE_ARRAY, TYPE_LIST, CALL_FUNCTION, ARGUMENT_LIST, CONDITION_STMT, INTERATOR,
-        ENUM_ITEM, ENUM_ITEM_LIST, ENUM_BLOCK_SCOPE, ENUM_DECLARATION, FOR_STMT, WHILE_STMT,
-        LOOP_DECLARATION, RETURN_STMT, STATEMENT, BLOCK_SCOPE, EXPRESSION, VARIABLE_DECLARATION,
-        CONSTANT_DECLARATION, ACCESS_MODIFIER, DATA_DECLARATION, GENERIC_PARAM, GENERIC_ARGS, STRUCT_VALUE_ASSIGNMENT,
-        STRUCT_VALUE_ASSIGN_LIST, STRUCT_INSTANCE, STRUCT_BLOCK_SCOPE, STRUCT_INHERIT, STRUCT_DECLARATION, PARAMETER,
-        PARAMETER_LIST, TYPE_IDENTIFER, TYPE_FUNCTION, FUNCTION_DECLARATION, ANONIMOUS_FUNCTION,
-        EXTERN_DECLARATION, MODULE_DECLARATION, IMPORT_DECLARATION, BIN_OP, UNARY_OP, UNKNOW,
-        ASSIGNMENT_STMT, OP_ASSIGNMENT, LOOP_BLOCK_SCOPE
-    };
+    class Cast;
 
     class AstNode
     {
         public:
             std::string source_file;
-            TYPE type = TYPE::UNKNOW;
+            Ark::Ast::AstType type = Ark::Ast::AstType::UNKNOW;
             uint64_t line = 0;
             uint64_t col = 0;
 
@@ -116,40 +104,40 @@ namespace Ark::Ast
     {
         public:
             int value = 0;
-            LiteralInt() { type = TYPE::LITERAL_INT; }
+            LiteralInt() { type = Ark::Ast::AstType::LITERAL_INT; }
     };
 
     class LiteralFloat : public AstNode
     {
         public:
             float value = 0.f;
-            LiteralFloat() { type = TYPE::LITERAL_FLOAT; }
+            LiteralFloat() { type = Ark::Ast::AstType::LITERAL_FLOAT; }
     };
 
     class LiteralBool : public AstNode
     {
         public:
             bool value = false;
-            LiteralBool() { type = TYPE::LITERAL_BOOL; }
+            LiteralBool() { type = Ark::Ast::AstType::LITERAL_BOOL; }
     };
 
     class LiteralChar : public AstNode
     {
         public:
             char value = '\0';
-            LiteralChar() { type = TYPE::LITERAL_CHAR; }
+            LiteralChar() { type = Ark::Ast::AstType::LITERAL_CHAR; }
     };
 
     class LiteralString : public AstNode
     {
         public:
             std::string value = "";
-            LiteralString() { type = TYPE::LITERAL_STRING; }
+            LiteralString() { type = Ark::Ast::AstType::LITERAL_STRING; }
     };
 
     class TypeIdentifier : public AstNode
     {
-        TypeIdentifier() { type = TYPE::TYPE_IDENTIFER; }
+        TypeIdentifier() { type = Ark::Ast::AstType::TYPE_IDENTIFER; }
 
         std::unique_ptr<AstNode> base_type;
         std::unique_ptr<GenericArgs> generic_args;
@@ -161,7 +149,7 @@ namespace Ark::Ast
     class TypeArray : public AstNode
     {
         public:
-            TypeArray() { type = TYPE::TYPE_ARRAY; }
+            TypeArray() { type = Ark::Ast::AstType::TYPE_ARRAY; }
 
             std::unique_ptr<TypeIdentifier> element_type;
             uint32_t array_size = 0;
@@ -171,13 +159,13 @@ namespace Ark::Ast
     {
         public:
             std::string value = "";
-            Identifier() { type = TYPE::IDENTIFIER; }
+            Identifier() { type = Ark::Ast::AstType::IDENTIFIER; }
     };
 
     class VariableDeclaration : public AstNode
     {
         public:
-            VariableDeclaration() { type = TYPE::VARIABLE_DECLARATION; }
+            VariableDeclaration() { type = Ark::Ast::AstType::VARIABLE_DECLARATION; }
 
             std::string identifier;
             std::unique_ptr<TypeIdentifier> type_def;
@@ -187,7 +175,7 @@ namespace Ark::Ast
     class ConstantDeclaration : public AstNode
     {
         public:
-            ConstantDeclaration() { type = TYPE::CONSTANT_DECLARATION; }
+            ConstantDeclaration() { type = Ark::Ast::AstType::CONSTANT_DECLARATION; }
 
             std::string identifier;
             std::unique_ptr<TypeIdentifier> type_def;
@@ -197,7 +185,7 @@ namespace Ark::Ast
     class FunctionDeclaration : public AstNode 
     {
         public:
-            FunctionDeclaration() { type = TYPE::FUNCTION_DECLARATION; }
+            FunctionDeclaration() { type = Ark::Ast::AstType::FUNCTION_DECLARATION; }
 
             std::string identifier;
             std::unique_ptr<ParameterList> parameters;
@@ -209,7 +197,7 @@ namespace Ark::Ast
     class TypeList : public AstNode
     {
         public:
-            TypeList() { type = TYPE::TYPE_LIST; }
+            TypeList() { type = Ark::Ast::AstType::TYPE_LIST; }
 
             std::vector<std::unique_ptr<TypeIdentifier>> type_list;
     };
@@ -217,7 +205,7 @@ namespace Ark::Ast
     class CallFunction : public AstNode
     {
         public:
-            CallFunction() { type = TYPE::CALL_FUNCTION; }
+            CallFunction() { type = Ark::Ast::AstType::CALL_FUNCTION; }
 
             std::unique_ptr<Identifier> identifier;
             std::unique_ptr<GenericArgs> generic_args;
@@ -227,7 +215,7 @@ namespace Ark::Ast
     class BinOp : public AstNode
     {
         public:
-            BinOp() { type = TYPE::BIN_OP; }
+            BinOp() { type = Ark::Ast::AstType::BIN_OP; }
 
             Ark::Token oper;
             uint8_t priority = 0;
@@ -239,7 +227,7 @@ namespace Ark::Ast
     class GenericArgs : public AstNode
     {
         public: 
-            GenericArgs() { type = TYPE::GENERIC_ARGS; }
+            GenericArgs() { type = Ark::Ast::AstType::GENERIC_ARGS; }
 
             std::vector<std::unique_ptr<TypeIdentifier>> arg_list;
     };
@@ -247,7 +235,7 @@ namespace Ark::Ast
     class GenericParam : public AstNode
     {
         public: 
-            GenericParam() { type = TYPE::GENERIC_PARAM; }
+            GenericParam() { type = Ark::Ast::AstType::GENERIC_PARAM; }
 
             std::vector<std::unique_ptr<Identifier>> param_list;
     };
@@ -255,7 +243,7 @@ namespace Ark::Ast
     class UnaryOp : public AstNode
     {
         public: 
-            UnaryOp() { type = TYPE::UNARY_OP; }
+            UnaryOp() { type = Ark::Ast::AstType::UNARY_OP; }
 
             std::string value;
     };
@@ -263,7 +251,7 @@ namespace Ark::Ast
     class OpAssignment : public AstNode
     {
         public: 
-            OpAssignment() { type = TYPE::OP_ASSIGNMENT; }
+            OpAssignment() { type = Ark::Ast::AstType::OP_ASSIGNMENT; }
 
             std::string value;
     };
@@ -271,7 +259,7 @@ namespace Ark::Ast
     class AssignmentStmt : public AstNode
     {
         public: 
-            AssignmentStmt() { type = TYPE::ASSIGNMENT_STMT; }
+            AssignmentStmt() { type = Ark::Ast::AstType::ASSIGNMENT_STMT; }
 
             std::unique_ptr<Identifier> identifier;
             std::unique_ptr<OpAssignment> oper;
@@ -281,7 +269,7 @@ namespace Ark::Ast
     class ArgumentList : public AstNode
     {
         public: 
-            ArgumentList() { type = TYPE::ARGUMENT_LIST; }
+            ArgumentList() { type = Ark::Ast::AstType::ARGUMENT_LIST; }
 
             std::vector<std::unique_ptr<Expression>> expressions;
     };
@@ -294,7 +282,7 @@ namespace Ark::Ast
     class ConditionStmt : public AstNode
     {
         public: 
-            ConditionStmt() { type = TYPE::CONDITION_STMT; }
+            ConditionStmt() { type = Ark::Ast::AstType::CONDITION_STMT; }
 
             std::unique_ptr<IfBranch> main_branch;
             std::vector<std::unique_ptr<IfBranch>> elif_branch;
@@ -304,7 +292,7 @@ namespace Ark::Ast
     class Interator : public AstNode
     {
         public: 
-            Interator() { type = TYPE::INTERATOR; }
+            Interator() { type = Ark::Ast::AstType::INTERATOR; }
 
             std::string value;
     };
@@ -312,7 +300,7 @@ namespace Ark::Ast
     class EnumItem : public AstNode
     {
         public: 
-            EnumItem() { type = TYPE::ENUM_ITEM; }
+            EnumItem() { type = Ark::Ast::AstType::ENUM_ITEM; }
 
             std::vector<std::pair<std::string, std::unique_ptr<LiteralInt>>> items;
     };
@@ -320,7 +308,7 @@ namespace Ark::Ast
     class EnumItemList : public AstNode
     {
         public: 
-            EnumItemList() { type = TYPE::ENUM_ITEM_LIST; }
+            EnumItemList() { type = Ark::Ast::AstType::ENUM_ITEM_LIST; }
 
             std::vector<std::unique_ptr<EnumItem>> items_list;
     };
@@ -328,7 +316,7 @@ namespace Ark::Ast
     class EnumBlockScope : public AstNode
     {
         public: 
-            EnumBlockScope() { type = TYPE::ENUM_BLOCK_SCOPE; }
+            EnumBlockScope() { type = Ark::Ast::AstType::ENUM_BLOCK_SCOPE; }
 
             std::unique_ptr<EnumItemList> body;
     };
@@ -336,7 +324,7 @@ namespace Ark::Ast
     class EnumDeclaration : public AstNode
     {
         public: 
-            EnumDeclaration() { type = TYPE::ENUM_DECLARATION; }
+            EnumDeclaration() { type = Ark::Ast::AstType::ENUM_DECLARATION; }
 
             std::unique_ptr<EnumItemList> body;
             bool is_internal = false;
@@ -345,7 +333,7 @@ namespace Ark::Ast
     class ForStmt : public AstNode
     {
         public: 
-            ForStmt() { type = TYPE::FOR_STMT; }
+            ForStmt() { type = Ark::Ast::AstType::FOR_STMT; }
 
             std::unique_ptr<ConstantDeclaration> value;
             std::unique_ptr<Interator> iterator;
@@ -355,7 +343,7 @@ namespace Ark::Ast
     class WhileStmt : public AstNode
     {
         public: 
-            WhileStmt() { type = TYPE::WHILE_STMT; }
+            WhileStmt() { type = Ark::Ast::AstType::WHILE_STMT; }
 
             std::unique_ptr<Expression> expression;
     };
@@ -363,7 +351,7 @@ namespace Ark::Ast
     class LoopBlockScope: public AstNode
     {
         public:
-            LoopBlockScope() { type = TYPE::LOOP_BLOCK_SCOPE; }
+            LoopBlockScope() { type = Ark::Ast::AstType::LOOP_BLOCK_SCOPE; }
 
             std::unique_ptr<AstNode> statement;
     };
@@ -371,10 +359,186 @@ namespace Ark::Ast
     class LoopDeclaration: public AstNode
     {
         public:
-            LoopDeclaration() { type = TYPE::LOOP_DECLARATION; }
+            LoopDeclaration() { type = Ark::Ast::AstType::LOOP_DECLARATION; }
 
             std::unique_ptr<AstNode> loop_decl_stmt;
             std::unique_ptr<LoopBlockScope> body; 
+    };
+    
+    class ReturnStmt: public AstNode
+    {
+        public:
+            ReturnStmt() { type = Ark::Ast::AstType::RETURN_STMT; }
+
+            std::unique_ptr<Expression> loop_decl_stmt;
+    };
+    
+    class Statement: public AstNode
+    {
+        public:
+            Statement() { type = Ark::Ast::AstType::STATEMENT; }
+
+            std::unique_ptr<AstNode> body;
+    };
+    
+    class BlockScope: public AstNode
+    {
+        public:
+            BlockScope() { type = Ark::Ast::AstType::BLOCK_SCOPE; }
+
+            std::unique_ptr<Statement> body;
+    };
+    
+    class Expression: public AstNode
+    {
+        public:
+            Expression() { type = Ark::Ast::AstType::EXPRESSION; }
+
+            std::unique_ptr<BinOp> value;
+    };
+    
+    class DataDeclaration: public AstNode
+    {
+        public:
+            DataDeclaration() { type = Ark::Ast::AstType::DATA_DECLARATION; }
+
+            std::unique_ptr<AstNode> var_decl;
+            std::unique_ptr<Expression> init_value;
+            bool is_internal = false;
+    };
+    
+    class StructValueAssignment: public AstNode
+    {
+        public:
+            StructValueAssignment() { type = Ark::Ast::AstType::STRUCT_VALUE_ASSIGNMENT; }
+
+            std::unique_ptr<Identifier> identifier;
+            std::unique_ptr<LiteralValue> value;
+            bool is_internal = false;
+    };
+    
+    class StructValueAssignList: public AstNode
+    {
+        public:
+            StructValueAssignList() { type = Ark::Ast::AstType::STRUCT_VALUE_ASSIGN_LIST; }
+
+            std::vector<std::unique_ptr<StructValueAssignment>> assignments;
+    };
+    
+    class StructInstace: public AstNode
+    {
+        public:
+            StructInstace() { type = Ark::Ast::AstType::STRUCT_INSTANCE; }
+
+            std::unique_ptr<Identifier> identificador;
+            std::unique_ptr<StructValueAssignList> assignments;
+    };
+    
+    class StructBlockScope: public AstNode
+    {
+        public:
+            StructBlockScope() { type = Ark::Ast::AstType::STRUCT_BLOCK_SCOPE; }
+
+            std::unique_ptr<DataDeclaration> value;
+    };
+    
+    class StructInherit: public AstNode
+    {
+        public:
+            StructInherit() { type = Ark::Ast::AstType::STRUCT_BLOCK_SCOPE; }
+
+            std::unique_ptr<Identifier> identifier;
+            bool has_priority = false;
+    };
+    
+    class StructDeclaration: public AstNode
+    {
+        public:
+            StructDeclaration() { type = Ark::Ast::AstType::STRUCT_DECLARATION; }
+
+            std::unique_ptr<Identifier> identifier;
+            std::unique_ptr<GenericParam> generics;
+            std::vector<std::unique_ptr<StructInherit>> inheritances;
+            std::unique_ptr<StructBlockScope> body;
+            bool is_internal = false;
+    };
+    
+    class Parameter: public AstNode
+    {
+        public:
+            Parameter() { type = Ark::Ast::AstType::PARAMETER; }
+
+            std::unique_ptr<AstNode> var_decl;
+            std::unique_ptr<LiteralValue> body;
+    };
+    
+    class ParameterList: public AstNode
+    {
+        public:
+            ParameterList() { type = Ark::Ast::AstType::PARAMETER_LIST; }
+
+            std::vector<std::unique_ptr<LiteralValue>> value;
+    };
+    
+    class TypeFunction: public AstNode
+    {
+        public:
+            TypeFunction() { type = Ark::Ast::AstType::TYPE_FUNCTION; }
+
+            std::unique_ptr<TypeList> type_list;
+            std::unique_ptr<TypeIdentifier> type_def;
+    };
+    
+    class AnonimousFunction: public AstNode
+    {
+        public:
+            AnonimousFunction() { type = Ark::Ast::AstType::ANONIMOUS_FUNCTION; }
+
+            std::unique_ptr<ParameterList> param_list;
+            std::unique_ptr<TypeIdentifier> type_def;
+            std::unique_ptr<BlockScope> body;
+    };
+    
+    class ExternDeclaration: public AstNode
+    {
+        public:
+            ExternDeclaration() { type = Ark::Ast::AstType::EXTERN_DECLARATION; }
+
+            std::unique_ptr<TypeList> type_list;
+            std::unique_ptr<TypeIdentifier> type_def;
+    };
+    
+    class ModuleDeclaration: public AstNode
+    {
+        public:
+            ModuleDeclaration() { type = Ark::Ast::AstType::MODULE_DECLARATION; }
+
+            std::vector<std::unique_ptr<Identifier>> value;
+    };
+    
+    class ImportDeclaration: public AstNode
+    {
+        public:
+            ImportDeclaration() { type = Ark::Ast::AstType::IMPORT_DECLARATION; }
+
+            std::vector<std::unique_ptr<Identifier>> value;
+    };
+    
+    class Cast: public AstNode
+    {
+        public:
+            Cast() { type = Ark::Ast::AstType::CAST; }
+
+            std::unique_ptr<Expression> value;
+            std::unique_ptr<TypeIdentifier> type_def;
+    };
+    
+    class LiteralValue: public AstNode
+    {
+        public:
+            LiteralValue() { type = Ark::Ast::AstType::LITERAL_VALUE; }
+
+            std::unique_ptr<AstNode> value;
     };
 }
 

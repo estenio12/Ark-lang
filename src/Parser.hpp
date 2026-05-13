@@ -46,11 +46,11 @@ namespace Ark
 
             std::unordered_map<std::string, PRIORITY> op_arith_precedency =
             {
-                {Ark::OP_ARITHMETIC::ADD, PRIORITY::LVL_4},
-                {Ark::OP_ARITHMETIC::SUB, PRIORITY::LVL_4},
-                {Ark::OP_ARITHMETIC::MUL, PRIORITY::LVL_5},
-                {Ark::OP_ARITHMETIC::DIV, PRIORITY::LVL_5},
-                {Ark::OP_ARITHMETIC::MOD, PRIORITY::LVL_5},
+                {std::string(Ark::OP_ARITHMETIC::ADD), PRIORITY::LVL_4},
+                {std::string(Ark::OP_ARITHMETIC::SUB), PRIORITY::LVL_4},
+                {std::string(Ark::OP_ARITHMETIC::MUL), PRIORITY::LVL_5},
+                {std::string(Ark::OP_ARITHMETIC::DIV), PRIORITY::LVL_5},
+                {std::string(Ark::OP_ARITHMETIC::MOD), PRIORITY::LVL_5},
             };
 
         public:
@@ -60,7 +60,7 @@ namespace Ark
 
         // # Helpers functions.
         private:
-            PRIORITY Parser::GetPriority(const Ark::Token& token);
+            PRIORITY GetPriority(const Ark::Token& token);
 
         // # Parser functions.
         private:
