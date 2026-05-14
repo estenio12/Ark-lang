@@ -59,8 +59,8 @@ namespace Ark
         std::string module_id;
         uint32_t deep;
         bool is_const = false;
-        bool is_ready = false; 
-        bool is_internal = false; 
+        bool is_ready = false;
+        bool is_internal = false;
         TypeSignature type;
 
         std::string GetFullName() const 
@@ -83,7 +83,7 @@ namespace Ark
 
             void ExitScope() { if (stack.size() > 1) stack.pop_back(); }
 
-            bool ExistsAnywhere(const std::string& id) 
+            bool ExistsAnywhere(const std::string& id)
             {
                 for (auto it = stack.rbegin(); it != stack.rend(); ++it) 
                 {

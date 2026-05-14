@@ -11,3 +11,13 @@ Ark::Parser::PRIORITY Ark::Parser::GetPriority(const Token& token)
     return PRIORITY::LVL_1;
 }
 
+std::unique_ptr<Ark::Ast::AstBranch> Ark::Parser::Parse(std::unique_ptr<TokenManager> tokens)
+{
+    
+}
+
+std::unique_ptr<Ark::Ast::VariableDeclaration> Ark::Parser::ParseVariableDeclaration(Ark::TokenManager tokens)
+{
+
+}
+

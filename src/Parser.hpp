@@ -53,6 +53,8 @@ namespace Ark
                 {std::string(Ark::OP_ARITHMETIC::MOD), PRIORITY::LVL_5},
             };
 
+
+
         public:
             Parser() = default;
         
@@ -64,6 +66,8 @@ namespace Ark
 
         // # Parser functions.
         private:
-            
+            std::unique_ptr<Ark::Ast::VariableDeclaration> ParseVariableDeclaration(Ark::TokenManager tokens);
+            // std::unique_ptr<Ark::Ast::ConstantDeclaration> ParseConstantDeclaration(Ark::TokenManager tokens);
+            // std::unique_ptr<Ark::Ast::Expression> ParseExpressionDeclaration(Ark::TokenManager tokens);
     };
 }

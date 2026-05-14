@@ -17,6 +17,7 @@
 #include "CoreCompile.hpp"
 #include "FileHandler.hpp"
 #include "Lexer.hpp"
+#include "Parser.hpp"
 
 Ark::CoreCompile::CoreCompile(std::shared_ptr<Ark::ModuleResolver> module_manager): module_manager(module_manager) { }
 
@@ -27,6 +28,14 @@ void Ark::CoreCompile::Compile(const std::string& path)
 
     auto lexer = std::make_unique<Ark::Lexer>(file_descriptor);
     auto token_manager = lexer->Tokenize();
+
+    auto parser = std::make_unique<Ark::Parser>();
+    auto ast = parser->Parse(std::move(token_manager));
+
+    // for(const auto& branch : ast->branches)
+    // {
+    //     branch->Dump(0);
+    // }
 }
     
 void Ark::CoreCompile::OnModuleReady()
