@@ -18,7 +18,7 @@ std::unique_ptr<Ark::Ast::AstBranch> Ark::Parser::Parse()
     return ast;
 }
 
-void Ark::Parser::Consume(const std::string& token_content, std::string_view msg)
+void Ark::Parser::Expect(const std::string& token_content, std::string_view msg)
 {
     auto current_token = this->tokens->Consume();
     if(current_token.content != token_content)
@@ -50,6 +50,13 @@ std::unique_ptr<Ark::Ast::BlockScope> Ark::Parser::ParseBlockScope()
         {
             case Ark::TokenType::KEYWORD:
             {
+                if(current_token.content == Ark::KEYWORDS::TINTERNAL)
+                {
+                    this->tokens->Consume();
+                    Ark::Logs::Push(Ark::Logs::LogStatus::LOG_ERROR, "Expected 'var', 'const' e 'fun' after 'internal' keyword.");
+                    continue;
+                }
+
                 if(current_token.content == Ark::KEYWORDS::TVAR)
                 {
                     block_scope->body.push_back(this->ParseVariableDeclaration());
@@ -73,7 +80,7 @@ std::unique_ptr<Ark::Ast::BlockScope> Ark::Parser::ParseBlockScope()
 
 std::unique_ptr<Ark::Ast::VariableDeclaration> Ark::Parser::ParseVariableDeclaration()
 {
-
+    this->Expect(Ark::KEYWORDS::TVAR, "Expected variable declaration.");
 }
 
 

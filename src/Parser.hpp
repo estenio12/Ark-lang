@@ -64,7 +64,7 @@ namespace Ark
         // # Helpers functions.
         private:
             PRIORITY GetPriority(const Ark::Token& token);
-            void Consume(const std::string& token_content, std::string_view msg);
+            void Expect(const std::string& token_content, std::string_view msg);
 
         // # Parser functions.
         private:
