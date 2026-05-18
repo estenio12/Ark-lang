@@ -48,7 +48,6 @@ namespace Ark::Ast
     class AccessModifier;
     class Expression;
     class BlockScope;
-    class Statement;
     class ReturnStmt;
     class LoopDeclartion;
     class WhileStmt;
@@ -353,7 +352,7 @@ namespace Ark::Ast
         public:
             LoopBlockScope() { type = Ark::Ast::AstType::LOOP_BLOCK_SCOPE; }
 
-            std::unique_ptr<AstNode> statement;
+            std::vector<std::unique_ptr<AstNode>> body;
     };
     
     class LoopDeclaration: public AstNode
@@ -373,20 +372,12 @@ namespace Ark::Ast
             std::unique_ptr<Expression> loop_decl_stmt;
     };
     
-    class Statement: public AstNode
-    {
-        public:
-            Statement() { type = Ark::Ast::AstType::STATEMENT; }
-
-            std::unique_ptr<AstNode> body;
-    };
-    
     class BlockScope: public AstNode
     {
         public:
             BlockScope() { type = Ark::Ast::AstType::BLOCK_SCOPE; }
 
-            std::unique_ptr<Statement> body;
+            std::vector<std::unique_ptr<AstNode>> body;
     };
     
     class Expression: public AstNode

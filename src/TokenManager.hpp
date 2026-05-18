@@ -82,6 +82,11 @@ namespace Ark
                 if (cursor < tokens.size()) return tokens[cursor++];
                 return tokens.back();
             }
+        
+            const void Advance() 
+            {
+                if (cursor < tokens.size()) cursor++;
+            }
 
             void PushEndOfFile(int64_t line = 0, int64_t col = 0)
             {
@@ -124,6 +129,8 @@ namespace Ark
                 else
                     Ark::Output::Print(ss.str());
             }
+
+            std::string GetFilePath() { return this->file_descriptor->absolute_path; }
 
         private:
             std::string TokenTypeString(TokenType type)

@@ -19,6 +19,7 @@
 #include "Definitions.hpp"
 #include "TokenManager.hpp"
 #include "AST.hpp"
+#include "Logs.hpp"
 
 namespace Ark
 {
@@ -53,20 +54,22 @@ namespace Ark
                 {std::string(Ark::OP_ARITHMETIC::MOD), PRIORITY::LVL_5},
             };
 
-
+            std::unique_ptr<TokenManager> tokens;
 
         public:
-            Parser() = default;
+            Parser(std::unique_ptr<TokenManager> tokens):tokens(std::move(tokens)){ };
         
-            std::unique_ptr<Ark::Ast::AstBranch> Parse(std::unique_ptr<TokenManager> tokens);
+            std::unique_ptr<Ark::Ast::AstBranch> Parse();
 
         // # Helpers functions.
         private:
             PRIORITY GetPriority(const Ark::Token& token);
+            void Consume(const std::string& token_content, std::string_view msg);
 
         // # Parser functions.
         private:
-            std::unique_ptr<Ark::Ast::VariableDeclaration> ParseVariableDeclaration(Ark::TokenManager tokens);
+            std::unique_ptr<Ark::Ast::BlockScope> ParseBlockScope();
+            std::unique_ptr<Ark::Ast::VariableDeclaration> ParseVariableDeclaration();
             // std::unique_ptr<Ark::Ast::ConstantDeclaration> ParseConstantDeclaration(Ark::TokenManager tokens);
             // std::unique_ptr<Ark::Ast::Expression> ParseExpressionDeclaration(Ark::TokenManager tokens);
     };

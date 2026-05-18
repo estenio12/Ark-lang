@@ -29,8 +29,8 @@ void Ark::CoreCompile::Compile(const std::string& path)
     auto lexer = std::make_unique<Ark::Lexer>(file_descriptor);
     auto token_manager = lexer->Tokenize();
 
-    auto parser = std::make_unique<Ark::Parser>();
-    auto ast = parser->Parse(std::move(token_manager));
+    auto parser = std::make_unique<Ark::Parser>(std::move(token_manager));
+    auto ast = parser->Parse();
 
     // for(const auto& branch : ast->branches)
     // {

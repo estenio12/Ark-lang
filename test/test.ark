@@ -1,4 +1,3 @@
 # teste de comentário
 var teste: i64 = 15;
-teste += 10;
 
