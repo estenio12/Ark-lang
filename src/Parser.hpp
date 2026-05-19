@@ -65,11 +65,16 @@ namespace Ark
         private:
             PRIORITY GetPriority(const Ark::Token& token);
             void Expect(const std::string& token_content, std::string_view msg);
+            void PushTokenError(const Ark::Token& token, std::string_view msg);
 
         // # Parser functions.
         private:
             std::unique_ptr<Ark::Ast::BlockScope> ParseBlockScope();
-            std::unique_ptr<Ark::Ast::VariableDeclaration> ParseVariableDeclaration();
+            std::unique_ptr<Ark::Ast::AstNode> ParseModifier();
+            std::unique_ptr<Ark::Ast::VariableDeclaration> ParseVariableDeclaration(bool is_internal);
+            std::unique_ptr<Ark::Ast::TypeIdentifier> ParseTypeIdentifier();
+            std::unique_ptr<Ark::Ast::TypeFunction> ParseTypeFunction();
+            std::unique_ptr<Ark::Ast::TypeList> ParseTypeList();
             // std::unique_ptr<Ark::Ast::ConstantDeclaration> ParseConstantDeclaration(Ark::TokenManager tokens);
             // std::unique_ptr<Ark::Ast::Expression> ParseExpressionDeclaration(Ark::TokenManager tokens);
     };

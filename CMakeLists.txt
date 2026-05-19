@@ -23,6 +23,7 @@ set(SOURCES
     src/main.cpp
     src/ModuleManager.cpp
     src/Parser.cpp
+    src/ParserHelpers.cpp
 )
 
 add_executable(arkc ${SOURCES})

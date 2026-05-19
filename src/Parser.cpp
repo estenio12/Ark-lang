@@ -1,41 +1,10 @@
 #include "Parser.hpp"
 
-Ark::Parser::PRIORITY Ark::Parser::GetPriority(const Token& token) 
-{
-    if (token.type == TokenType::OP_ARITHMETIC)
-        return op_arith_precedency[token.content];
-    
-    if (precedency.count(token.type))
-        return precedency[token.type];
-
-    return PRIORITY::LVL_1;
-}
-
 std::unique_ptr<Ark::Ast::AstBranch> Ark::Parser::Parse()
 {
     auto ast = std::make_unique<Ark::Ast::AstBranch>();
     ast->branches.push_back(this->ParseBlockScope());
     return ast;
-}
-
-void Ark::Parser::Expect(const std::string& token_content, std::string_view msg)
-{
-    auto current_token = this->tokens->Consume();
-    if(current_token.content != token_content)
-    {
-        std::string buffer;
-        buffer.reserve(250);
-
-        buffer.append(this->tokens->GetFilePath());
-        buffer.append("(Col ");
-        buffer.append(std::to_string(current_token.col));
-        buffer.append(", Ln ");
-        buffer.append(std::to_string(current_token.line));
-        buffer.append("): ");
-        buffer.append(msg);
-
-        Ark::Logs::Push(Ark::Logs::LogStatus::LOG_ERROR, std::move(buffer));
-    }
 }
 
 std::unique_ptr<Ark::Ast::BlockScope> Ark::Parser::ParseBlockScope()
@@ -50,16 +19,13 @@ std::unique_ptr<Ark::Ast::BlockScope> Ark::Parser::ParseBlockScope()
         {
             case Ark::TokenType::KEYWORD:
             {
-                if(current_token.content == Ark::KEYWORDS::TINTERNAL)
+                if(current_token.content == Ark::KEYWORDS::TINTERNAL ||
+                   current_token.content == Ark::KEYWORDS::TVAR      ||
+                   current_token.content == Ark::KEYWORDS::TCONST    ||
+                   current_token.content == Ark::KEYWORDS::TFUN      ||    
+                   current_token.content == Ark::KEYWORDS::TSTRUCT   )
                 {
-                    this->tokens->Consume();
-                    Ark::Logs::Push(Ark::Logs::LogStatus::LOG_ERROR, "Expected 'var', 'const' e 'fun' after 'internal' keyword.");
-                    continue;
-                }
-
-                if(current_token.content == Ark::KEYWORDS::TVAR)
-                {
-                    block_scope->body.push_back(this->ParseVariableDeclaration());
+                    block_scope->body.push_back(this->ParseModifier());
                     continue;
                 }
 
@@ -78,9 +44,122 @@ std::unique_ptr<Ark::Ast::BlockScope> Ark::Parser::ParseBlockScope()
     return block_scope;
 }
 
-std::unique_ptr<Ark::Ast::VariableDeclaration> Ark::Parser::ParseVariableDeclaration()
+std::unique_ptr<Ark::Ast::AstNode> Ark::Parser::ParseModifier()
 {
-    this->Expect(Ark::KEYWORDS::TVAR, "Expected variable declaration.");
+    bool is_internal = false;
+    auto current_token = this->tokens->Peek(0);
+    
+    if(current_token.content == Ark::KEYWORDS::TINTERNAL)
+    {
+        is_internal = true;
+        this->tokens->Advance();
+        current_token = this->tokens->Peek(0);
+    }
+
+    if(current_token.content == Ark::KEYWORDS::TVAR)
+        return this->ParseVariableDeclaration(is_internal);
+
+    std::string message = "The 'internal' modifier can only be applied to 'var', 'const', 'fun', or 'struct' declarations, but found '" + current_token.content + "'.";
+    this->PushTokenError(current_token, std::move(message));
+
+    this->tokens->Advance();
+    return nullptr;
 }
 
+std::unique_ptr<Ark::Ast::VariableDeclaration> Ark::Parser::ParseVariableDeclaration(bool is_internal)
+{
+    auto current_token = this->tokens->Peek(0);
+    auto ast_node = std::make_unique<Ark::Ast::VariableDeclaration>();
+    ast_node->is_internal = is_internal;
+    ast_node->col = current_token.col;
+    ast_node->line = current_token.line;
+    ast_node->source_file = this->tokens->GetFilePath();
+
+    this->Expect(Ark::KEYWORDS::TVAR, "Expected keyword 'var'");
+
+    auto token_id = this->tokens->Consume();
+    if(token_id.type == Ark::TokenType::IDENTIFIER)
+    {
+        ast_node->identifier = token_id.content;
+    }
+    else
+    {
+        this->PushTokenError(token_id, "Expected a 'identifier' after 'var' declaration, but found '" +token_id.content+ "'.");
+        while(!this->tokens->IsAtEnd())
+        {
+            auto tmp = this->tokens->Consume();
+            if(tmp.content == Ark::DELIMITER::SEMICOLON) break; 
+        }
+    }
+
+    this->Expect(Ark::DELIMITER::COLON, "Expected the delimiter ':' after 'identifier' definition." );
+
+    ast_node->type_def = this->ParseTypeIdentifier();
+
+    return ast_node;
+}
+
+std::unique_ptr<Ark::Ast::TypeIdentifier> Ark::Parser::ParseTypeIdentifier()
+{
+    auto token_type = this->tokens->Consume();
+    auto ast_node = std::make_unique<Ark::Ast::TypeIdentifier>();
+    ast_node->col = token_type.col;
+    ast_node->line = token_type.line;
+    ast_node->source_file = this->tokens->GetFilePath();
+    
+    if(token_type.type == Ark::TokenType::KEYWORD        ||
+       token_type.type == Ark::TokenType::LITERAL_INT    || 
+       token_type.type == Ark::TokenType::LITERAL_FLOAT  || 
+       token_type.type == Ark::TokenType::LITERAL_BOOL   || 
+       token_type.type == Ark::TokenType::LITERAL_CHAR   || 
+       token_type.type == Ark::TokenType::LITERAL_STRING )
+    {
+        ast_node->col  = token_type.col;
+        ast_node->line = token_type.line;
+        ast_node->source_file = this->tokens->GetFilePath();
+        
+        if(token_type.content == Ark::KEYWORDS::TFUN)
+        {
+            ast_node->is_function_type = true;
+            ast_node->base_type = this->ParseTypeFunction();
+        }
+    }
+
+    return ast_node;
+}
+
+std::unique_ptr<Ark::Ast::TypeFunction> Ark::Parser::ParseTypeFunction()
+{
+    auto ast_node = std::make_unique<Ark::Ast::TypeFunction>();
+    this->Expect(Ark::DELIMITER::LPARAN, "Expected the delimiter '(' after 'fun' declaration.");
+    
+    if(this->tokens->Peek(0).content != Ark::DELIMITER::RPARAN)
+        ast_node->type_list = this->ParseTypeList();
+
+    this->Expect(Ark::DELIMITER::RPARAN, "The delimiter '(' was open but never close.");
+    this->Expect(Ark::DELIMITER::ARROW, "Expected the delimiter '->' after the function parameter declaration.");
+    ast_node->type_def = this->ParseTypeIdentifier();
+
+    return ast_node;
+}
+
+std::unique_ptr<Ark::Ast::TypeList> Ark::Parser::ParseTypeList()
+{
+    auto ast_node = std::make_unique<Ark::Ast::TypeList>();
+    ast_node->source_file = this->tokens->GetFilePath();
+
+    ast_node->type_list.push_back(this->ParseTypeIdentifier());
+    
+    if(this->tokens->Peek(0).content == Ark::DELIMITER::COMMA)
+    {
+        this->tokens->Advance();
+        while(!this->tokens->IsAtEnd())
+        {
+            ast_node->type_list.push_back(this->ParseTypeIdentifier());
+            if(this->tokens->Peek(0).content != Ark::DELIMITER::COMMA) break;
+        }
+    }
+
+    return ast_node;
+}
 

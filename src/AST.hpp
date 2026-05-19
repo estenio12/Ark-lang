@@ -138,11 +138,12 @@ namespace Ark::Ast
     {
         TypeIdentifier() { type = Ark::Ast::AstType::TYPE_IDENTIFER; }
 
-        std::unique_ptr<AstNode> base_type;
-        std::unique_ptr<GenericArgs> generic_args;
+        public:
+            std::unique_ptr<AstNode> base_type;
+            std::unique_ptr<GenericArgs> generic_args;
 
-        bool is_function_type = false;
-        bool is_array_type = false;
+            bool is_function_type = false;
+            bool is_array_type = false;
     };
 
     class TypeArray : public AstNode
@@ -169,6 +170,7 @@ namespace Ark::Ast
             std::string identifier;
             std::unique_ptr<TypeIdentifier> type_def;
             std::unique_ptr<Expression> value;
+            bool is_internal = false;
     };
 
     class ConstantDeclaration : public AstNode
