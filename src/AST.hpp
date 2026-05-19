@@ -144,6 +144,7 @@ namespace Ark::Ast
 
             bool is_function_type = false;
             bool is_array_type = false;
+            uint32_t array_range = 0;
     };
 
     class TypeArray : public AstNode

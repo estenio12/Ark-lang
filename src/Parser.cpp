@@ -124,6 +124,29 @@ std::unique_ptr<Ark::Ast::TypeIdentifier> Ark::Parser::ParseTypeIdentifier()
             ast_node->base_type = this->ParseTypeFunction();
         }
     }
+    else
+    {
+        this->PushTokenError(token_type, "Expected a type identifier, but found '" +token_type.content+ "'.");
+        return ast_node;
+    }
+
+    // # Array definition
+    if(this->tokens->Peek(0).content == Ark::DELIMITER::LBRACKET)
+    {
+        this->Expect(Ark::DELIMITER::LBRACKET, "Expected the delimiter '[' after the identifier.");
+        auto token = this->tokens->Consume();
+        if(token.type == Ark::TokenType::LITERAL_INT) 
+        {
+            ast_node->is_array_type = true;
+            ast_node->array_range = std::stoi(token.content);
+        }
+        else
+        {
+            this->PushTokenError(token_type, "Expected a literal int to define array range, but found '" +token.content+ "'.");
+            return ast_node;
+        }
+        this->Expect(Ark::DELIMITER::RBRACKET, "Expected the delimiter ']' after the type identifier.");
+    }
 
     return ast_node;
 }
